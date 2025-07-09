@@ -6,29 +6,43 @@
     <title>Register</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+    <style>
+        .pool-background {
+            background-image: url('{{ asset('kolam1.jpg') }}');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            min-height: 100vh;
+        }
+        
+        .glass-form {
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+        }
+    </style>
 </head>
-<body>
+<body class="pool-background">
 <div class="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
-  <div class="sm:mx-auto sm:w-full sm:max-w-sm">
-    <h2 class="mt-10 text-center text-2xl/9 font-bold tracking-tight text-gray-900">Daftarkan Akun Anda</h2>
-  </div>
 
-  <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+  <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm glass-form rounded-lg p-6">
+  <h2 class="text-center text-2xl/9 font-bold tracking-tight text-white">Daftarkan Akun Anda</h2>
     <!-- Alert Messages -->
     @if(session('success'))
-        <div class="mb-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded">
+        <div class="mb-4 p-4 bg-green-500 bg-opacity-30 border border-green-400 text-white rounded">
             {{ session('success') }}
         </div>
     @endif
     
     @if(session('error'))
-        <div class="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
+        <div class="mb-4 p-4 bg-red-500 bg-opacity-30 border border-red-400 text-white rounded">
             {{ session('error') }}
         </div>
     @endif
 
     @if ($errors->any())
-        <div class="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
+        <div class="mb-4 p-4 bg-red-500 bg-opacity-30 border border-red-400 text-white rounded">
             <ul>
                 @foreach ($errors->all() as $error)
                     <li>{{ $error }}</li>
@@ -40,45 +54,45 @@
     <form class="space-y-6" action="{{ route('register.post') }}" method="POST">
       @csrf
       <div>
-        <label for="name" class="block text-sm/6 font-medium text-gray-900">Nama</label>
+        <label for="name" class="block text-sm/6 font-medium text-white">Nama</label>
         <div class="mt-2">
-          <input type="text" name="name" id="name" value="{{ old('name') }}" autocomplete="name" required class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6">
+          <input type="text" name="name" id="name" value="{{ old('name') }}" autocomplete="name" required class="block w-full rounded-md bg-white bg-opacity-20 px-3 py-1.5 text-base text-white outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-400 sm:text-sm/6">
         </div>
       </div>
 
       <div>
-        <label for="email" class="block text-sm/6 font-medium text-gray-900">Email</label>
+        <label for="email" class="block text-sm/6 font-medium text-white">Email</label>
         <div class="mt-2">
-          <input type="email" name="email" id="email" value="{{ old('email') }}" autocomplete="email" required class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6">
-        </div>
-      </div>
-
-      <div>
-        <div class="flex items-center justify-between">
-          <label for="password" class="block text-sm/6 font-medium text-gray-900">Password</label>
-        </div>
-        <div class="mt-2">
-          <input type="password" name="password" id="password" autocomplete="current-password" required class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6">
+          <input type="email" name="email" id="email" value="{{ old('email') }}" autocomplete="email" required class="block w-full rounded-md bg-white bg-opacity-20 px-3 py-1.5 text-base text-white outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-400 sm:text-sm/6">
         </div>
       </div>
 
       <div>
         <div class="flex items-center justify-between">
-          <label for="password_confirmation" class="block text-sm/6 font-medium text-gray-900">Konfirmasi Password</label>
+          <label for="password" class="block text-sm/6 font-medium text-white">Password</label>
         </div>
         <div class="mt-2">
-          <input type="password" name="password_confirmation" id="password_confirmation" autocomplete="new-password" required class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6">
+          <input type="password" name="password" id="password" autocomplete="current-password" required class="block w-full rounded-md bg-white bg-opacity-20 px-3 py-1.5 text-base text-white outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-400 sm:text-sm/6">
         </div>
       </div>
 
       <div>
-        <button type="submit" class="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Daftar</button>
+        <div class="flex items-center justify-between">
+          <label for="password_confirmation" class="block text-sm/6 font-medium text-white">Konfirmasi Password</label>
+        </div>
+        <div class="mt-2">
+          <input type="password" name="password_confirmation" id="password_confirmation" autocomplete="new-password" required class="block w-full rounded-md bg-white bg-opacity-20 px-3 py-1.5 text-base text-white outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-400 sm:text-sm/6">
+        </div>
+      </div>
+
+      <div>
+        <button type="submit" class="flex w-full justify-center rounded-md bg-blue-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">Daftar</button>
       </div>
     </form>
 
-    <p class="mt-10 text-center text-sm/6 text-gray-500">
+    <p class="mt-10 text-center text-sm/6 text-white">
       Sudah Memiliki Akun?
-      <a href="{{ route('login') }}" class="font-semibold text-indigo-600 hover:text-indigo-500">Masuk</a>
+      <a href="{{ route('login') }}" class="font-semibold text-blue-300 hover:text-blue-200">Masuk</a>
     </p>
   </div>
 </div>

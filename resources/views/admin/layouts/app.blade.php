@@ -9,8 +9,42 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
+        .pool-background {
+            background-image: url('{{ asset('kolam1.jpg') }}');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            min-height: 100vh;
+        }
+        
+        .glass-sidebar {
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(10px);
+            border-right: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+        }
+        
+        .glass-header {
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+        }
+        
+        .glass-content {
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(10px);
+        }
+        
+        .glass-card {
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+        }
+        
         .sidebar-active {
-            background-color: rgba(59, 130, 246, 0.1);
+            background-color: rgba(59, 130, 246, 0.3);
             border-right: 4px solid #3b82f6;
         }
         
@@ -25,18 +59,18 @@
         }
     </style>
 </head>
-<body class="bg-gray-100">
+<body class="pool-background">
     <div class="flex h-screen overflow-hidden">
         <!-- Mobile sidebar overlay -->
         <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 sidebar-overlay z-40 lg:hidden hidden"></div>
         
         <!-- Sidebar -->
-        <aside id="sidebar" class="fixed lg:static inset-y-0 left-0 z-50 w-64 bg-white shadow-lg transform -translate-x-full lg:translate-x-0 sidebar-transition">
+        <aside id="sidebar" class="fixed lg:static inset-y-0 left-0 z-50 w-64 glass-sidebar shadow-lg transform -translate-x-full lg:translate-x-0 sidebar-transition">
             <!-- Logo -->
-            <div class="h-14 sm:h-16 flex items-center justify-between px-4 border-b border-gray-200">
-                <h1 class="text-lg sm:text-xl font-bold text-blue-600">🏊‍♀️ Admin Panel</h1>
+            <div class="h-14 sm:h-16 flex items-center justify-between px-4 border-b border-white border-opacity-20">
+                <h1 class="text-lg sm:text-xl font-bold text-white">🏊‍♀️ Admin Panel</h1>
                 <!-- Close button for mobile -->
-                <button id="close-sidebar" class="lg:hidden p-2 rounded-md text-gray-400 hover:text-gray-600 hover:bg-gray-100">
+                <button id="close-sidebar" class="lg:hidden p-2 rounded-md text-white text-opacity-70 hover:text-white hover:bg-white hover:bg-opacity-20">
                     <i class="fas fa-times text-lg"></i>
                 </button>
             </div>
@@ -44,15 +78,15 @@
             <!-- Navigation Menu -->
             <nav class="mt-4 sm:mt-6 overflow-y-auto h-full pb-20">
                 <div class="px-4 mb-3 sm:mb-4">
-                    <p class="text-xs font-semibold text-gray-400 uppercase tracking-wide">Menu Utama</p>
+                    <p class="text-xs font-semibold text-white text-opacity-70 uppercase tracking-wide">Menu Utama</p>
                 </div>
                 
-                <a href="{{ route('admin.dashboard') }}" class="flex items-center px-4 sm:px-6 py-2.5 sm:py-3 text-sm sm:text-base text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors {{ request()->routeIs('admin.dashboard') ? 'sidebar-active text-blue-600' : '' }}">
+                <a href="{{ route('admin.dashboard') }}" class="flex items-center px-4 sm:px-6 py-2.5 sm:py-3 text-sm sm:text-base text-white hover:bg-white hover:bg-opacity-20 hover:text-white transition-colors {{ request()->routeIs('admin.dashboard') ? 'sidebar-active text-white' : '' }}">
                     <i class="fas fa-chart-pie w-4 h-4 sm:w-5 sm:h-5 mr-3"></i>
                     <span>Dashboard</span>
                 </a>
                 
-                <a href="{{ route('admin.bookings.index') }}" class="flex items-center px-4 sm:px-6 py-2.5 sm:py-3 text-sm sm:text-base text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors {{ request()->routeIs('admin.bookings.*') ? 'sidebar-active text-blue-600' : '' }}">
+                <a href="{{ route('admin.bookings.index') }}" class="flex items-center px-4 sm:px-6 py-2.5 sm:py-3 text-sm sm:text-base text-white hover:bg-white hover:bg-opacity-20 hover:text-white transition-colors {{ request()->routeIs('admin.bookings.*') ? 'sidebar-active text-white' : '' }}">
                     <i class="fas fa-calendar-check w-4 h-4 sm:w-5 sm:h-5 mr-3"></i>
                     <span>Kelola Booking</span>
                     @if(isset($pendingBookings) && $pendingBookings > 0)
@@ -60,16 +94,16 @@
                     @endif
                 </a>
                 
-                <a href="{{ route('admin.users') }}" class="flex items-center px-4 sm:px-6 py-2.5 sm:py-3 text-sm sm:text-base text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors {{ request()->routeIs('admin.users') ? 'sidebar-active text-blue-600' : '' }}">
+                <a href="{{ route('admin.users') }}" class="flex items-center px-4 sm:px-6 py-2.5 sm:py-3 text-sm sm:text-base text-white hover:bg-white hover:bg-opacity-20 hover:text-white transition-colors {{ request()->routeIs('admin.users') ? 'sidebar-active text-white' : '' }}">
                     <i class="fas fa-users w-4 h-4 sm:w-5 sm:h-5 mr-3"></i>
                     <span>Kelola User</span>
                 </a>
                 
                 <div class="px-4 mt-4 sm:mt-6 mb-3 sm:mb-4">
-                    <p class="text-xs font-semibold text-gray-400 uppercase tracking-wide">Lainnya</p>
+                    <p class="text-xs font-semibold text-white text-opacity-70 uppercase tracking-wide">Lainnya</p>
                 </div>
                 
-                <a href="{{ route('admin.profile') }}" class="flex items-center px-4 sm:px-6 py-2.5 sm:py-3 text-sm sm:text-base text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors {{ request()->routeIs('admin.profile') ? 'sidebar-active text-blue-600' : '' }}">
+                <a href="{{ route('admin.profile') }}" class="flex items-center px-4 sm:px-6 py-2.5 sm:py-3 text-sm sm:text-base text-white hover:bg-white hover:bg-opacity-20 hover:text-white transition-colors {{ request()->routeIs('admin.profile') ? 'sidebar-active text-white' : '' }}">
                     <i class="fas fa-user-cog w-4 h-4 sm:w-5 sm:h-5 mr-3"></i>
                     <span>Profile</span>
                 </a>
@@ -79,17 +113,17 @@
         <!-- Main Content -->
         <div class="flex-1 flex flex-col w-0 lg:ml-0">
             <!-- Top Navigation Bar -->
-            <header class="bg-white shadow-sm border-b border-gray-200 relative">
+            <header class="glass-header shadow-sm border-b border-white border-opacity-20 relative">
                 <div class="flex items-center justify-between h-14 sm:h-16 px-4 sm:px-6">
                     <div class="flex items-center">
                         <!-- Mobile menu button -->
-                        <button id="mobile-menu-btn" class="lg:hidden p-2 -ml-2 rounded-md text-gray-400 hover:text-gray-600 hover:bg-gray-100 mr-2">
+                        <button id="mobile-menu-btn" class="lg:hidden p-2 -ml-2 rounded-md text-white text-opacity-70 hover:text-white hover:bg-white hover:bg-opacity-20 mr-2">
                             <i class="fas fa-bars text-lg"></i>
                         </button>
                         
                         <div>
-                            <h2 class="text-lg sm:text-2xl font-semibold text-gray-800">@yield('page-title', 'Dashboard')</h2>
-                            <p class="hidden sm:block text-sm text-gray-600">@yield('page-description', 'Selamat datang di panel admin')</p>
+                            <h2 class="text-lg sm:text-2xl font-semibold text-white">@yield('page-title', 'Dashboard')</h2>
+                            <p class="hidden sm:block text-sm text-white text-opacity-80">@yield('page-description', 'Selamat datang di panel admin')</p>
                         </div>
                     </div>
                     
@@ -97,8 +131,8 @@
                     <div class="flex items-center space-x-2 sm:space-x-4">
                         <!-- User info - hidden on mobile, show on sm+ -->
                         <div class="hidden sm:block text-right">
-                            <p class="text-sm font-medium text-gray-700">{{ Auth::user()->name }}</p>
-                            <p class="text-xs text-gray-500">Administrator</p>
+                            <p class="text-sm font-medium text-white">{{ Auth::user()->name }}</p>
+                            <p class="text-xs text-white text-opacity-70">Administrator</p>
                         </div>
                         
                         <!-- User avatar -->
@@ -119,17 +153,17 @@
             </header>
 
             <!-- Page Content -->
-            <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-100 p-3 sm:p-4 lg:p-6">
+            <main class="flex-1 overflow-x-hidden overflow-y-auto glass-content p-3 sm:p-4 lg:p-6">
                 <!-- Alert Messages -->
                 @if(session('success'))
-                    <div class="mb-4 sm:mb-6 p-3 sm:p-4 bg-green-100 border border-green-400 text-green-700 rounded-lg flex items-center text-sm sm:text-base">
+                    <div class="mb-4 sm:mb-6 p-3 sm:p-4 glass-card border border-green-400 text-white rounded-lg flex items-center text-sm sm:text-base">
                         <i class="fas fa-check-circle mr-2 flex-shrink-0"></i>
                         <span>{{ session('success') }}</span>
                     </div>
                 @endif
                 
                 @if(session('error'))
-                    <div class="mb-4 sm:mb-6 p-3 sm:p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg flex items-center text-sm sm:text-base">
+                    <div class="mb-4 sm:mb-6 p-3 sm:p-4 glass-card border border-red-400 text-white rounded-lg flex items-center text-sm sm:text-base">
                         <i class="fas fa-exclamation-circle mr-2 flex-shrink-0"></i>
                         <span>{{ session('error') }}</span>
                     </div>
