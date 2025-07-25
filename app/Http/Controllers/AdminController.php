@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\Models\Booking;
+use App\Models\BookingKelas;
+use App\Models\BookingSewaAlat;
 use Carbon\Carbon;
 
 class AdminController extends Controller
@@ -18,23 +20,65 @@ class AdminController extends Controller
         $totalUsers = User::where('role', 'user')->count();
         $totalAdmins = User::where('role', 'admin')->count();
         
-        // Statistik booking
+        // Statistik booking kolam
         $totalBookings = Booking::count();
         $pendingBookings = Booking::where('status', 'pending')->count();
         $approvedBookings = Booking::where('status', 'approved')->count();
         $totalRevenue = Booking::where('status_pembayaran', 'lunas')->sum('total_harga');
         
-        // Pemesanan terbaru (5 terakhir)
+        // Statistik booking kelas
+        $totalBookingKelas = BookingKelas::count();
+        $pendingBookingKelas = BookingKelas::where('status', 'pending')->count();
+        $approvedBookingKelas = BookingKelas::where('status', 'approved')->count();
+        $revenueBookingKelas = BookingKelas::where('status_pembayaran', 'lunas')->sum('total_harga');
+        
+        // Statistik booking sewa alat
+        $totalBookingSewaAlat = BookingSewaAlat::count();
+        $pendingBookingSewaAlat = BookingSewaAlat::where('status', 'pending')->count();
+        $approvedBookingSewaAlat = BookingSewaAlat::where('status', 'approved')->count();
+        $revenueBookingSewaAlat = BookingSewaAlat::where('status_pembayaran', 'lunas')->sum('total_harga');
+        
+        // Pemesanan terbaru kolam (5 terakhir)
         $recentBookings = Booking::with('user')
             ->latest()
             ->take(5)
             ->get();
         
-        // Booking mendatang (yang sudah approved dan tanggal booking >= hari ini)
+        // Pemesanan terbaru kelas (5 terakhir)
+        $recentBookingKelas = BookingKelas::with('user')
+            ->latest()
+            ->take(5)
+            ->get();
+            
+        // Pemesanan terbaru sewa alat (5 terakhir)
+        $recentBookingSewaAlat = BookingSewaAlat::with('user')
+            ->latest()
+            ->take(5)
+            ->get();
+        
+        // Booking mendatang kolam (yang sudah approved dan tanggal booking >= hari ini)
         $upcomingBookings = Booking::with('user')
             ->where('status', 'approved')
             ->where('tanggal_booking', '>=', Carbon::today())
             ->orderBy('tanggal_booking', 'asc')
+            ->orderBy('jam_mulai', 'asc')
+            ->take(5)
+            ->get();
+            
+        // Booking mendatang kelas (yang sudah approved dan tanggal kelas >= hari ini)
+        $upcomingBookingKelas = BookingKelas::with('user')
+            ->where('status', 'approved')
+            ->where('tanggal_kelas', '>=', Carbon::today())
+            ->orderBy('tanggal_kelas', 'asc')
+            ->orderBy('jam_mulai', 'asc')
+            ->take(5)
+            ->get();
+            
+        // Booking mendatang sewa alat (yang sudah approved dan tanggal sewa >= hari ini)
+        $upcomingBookingSewaAlat = BookingSewaAlat::with('user')
+            ->where('status', 'approved')
+            ->where('tanggal_sewa', '>=', Carbon::today())
+            ->orderBy('tanggal_sewa', 'asc')
             ->orderBy('jam_mulai', 'asc')
             ->take(5)
             ->get();
@@ -44,6 +88,11 @@ class AdminController extends Controller
             ->where('tanggal_booking', Carbon::today())
             ->where('status', 'approved')
             ->count();
+            
+        // Total pending untuk semua jenis booking (untuk notifikasi sidebar)
+        $totalPendingBookings = $pendingBookings;
+        $totalPendingBookingKelas = $pendingBookingKelas;
+        $totalPendingBookingSewaAlat = $pendingBookingSewaAlat;
         
         return view('admin.dashboard', compact(
             'totalUsers', 
@@ -52,9 +101,24 @@ class AdminController extends Controller
             'pendingBookings', 
             'approvedBookings', 
             'totalRevenue',
+            'totalBookingKelas',
+            'pendingBookingKelas',
+            'approvedBookingKelas',
+            'revenueBookingKelas',
+            'totalBookingSewaAlat',
+            'pendingBookingSewaAlat',
+            'approvedBookingSewaAlat',
+            'revenueBookingSewaAlat',
             'recentBookings',
+            'recentBookingKelas',
+            'recentBookingSewaAlat',
             'upcomingBookings',
-            'todayBookings'
+            'upcomingBookingKelas',
+            'upcomingBookingSewaAlat',
+            'todayBookings',
+            'totalPendingBookings',
+            'totalPendingBookingKelas',
+            'totalPendingBookingSewaAlat'
         ));
     }
 

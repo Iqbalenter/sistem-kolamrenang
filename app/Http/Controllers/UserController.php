@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Booking;
+use App\Models\BookingKelas;
+use App\Models\BookingSewaAlat;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -13,7 +16,85 @@ class UserController extends Controller
     public function dashboard()
     {
         $user = Auth::user();
-        return view('user.dashboard', compact('user'));
+        
+        // Hitung total booking dari semua jenis booking
+        $totalBookingKolam = Booking::where('user_id', $user->id)->count();
+        $totalBookingKelas = BookingKelas::where('user_id', $user->id)->count();
+        $totalBookingSewaAlat = BookingSewaAlat::where('user_id', $user->id)->count();
+        $totalBookings = $totalBookingKolam + $totalBookingKelas + $totalBookingSewaAlat;
+        
+        // Hitung booking berdasarkan status
+        $pendingBookings = Booking::where('user_id', $user->id)->where('status', 'pending')->count() +
+                          BookingKelas::where('user_id', $user->id)->where('status', 'pending')->count() +
+                          BookingSewaAlat::where('user_id', $user->id)->where('status', 'pending')->count();
+                          
+        $approvedBookings = Booking::where('user_id', $user->id)->where('status', 'approved')->count() +
+                           BookingKelas::where('user_id', $user->id)->where('status', 'approved')->count() +
+                           BookingSewaAlat::where('user_id', $user->id)->where('status', 'approved')->count();
+        
+        // Ambil booking terbaru dari semua jenis
+        $recentBookings = collect();
+        
+        // Booking kolam terbaru
+        $recentBookingKolam = Booking::where('user_id', $user->id)
+            ->latest()
+            ->take(3)
+            ->get()
+            ->map(function($booking) {
+                $booking->booking_type = 'kolam';
+                return $booking;
+            });
+            
+        // Booking kelas terbaru
+        $recentBookingKelas = BookingKelas::where('user_id', $user->id)
+            ->latest()
+            ->take(3)
+            ->get()
+            ->map(function($booking) {
+                $booking->booking_type = 'kelas';
+                return $booking;
+            });
+            
+        // Booking sewa alat terbaru
+        $recentBookingSewaAlat = BookingSewaAlat::where('user_id', $user->id)
+            ->latest()
+            ->take(3)
+            ->get()
+            ->map(function($booking) {
+                $booking->booking_type = 'sewa_alat';
+                return $booking;
+            });
+        
+        // Gabungkan dan urutkan berdasarkan created_at
+        $recentBookings = $recentBookingKolam
+            ->concat($recentBookingKelas)
+            ->concat($recentBookingSewaAlat)
+            ->sortByDesc('created_at')
+            ->take(5);
+        
+        // Ambil booking dengan pembayaran ditolak untuk notifikasi
+        $rejectedPaymentKelas = BookingKelas::where('user_id', $user->id)
+            ->where('status', 'approved')
+            ->where('status_pembayaran', 'ditolak')
+            ->get();
+            
+        $rejectedPaymentSewaAlat = BookingSewaAlat::where('user_id', $user->id)
+            ->where('status', 'approved')
+            ->where('status_pembayaran', 'ditolak')
+            ->get();
+        
+        return view('user.dashboard', compact(
+            'user', 
+            'totalBookings',
+            'totalBookingKolam',
+            'totalBookingKelas', 
+            'totalBookingSewaAlat',
+            'pendingBookings',
+            'approvedBookings',
+            'recentBookings',
+            'rejectedPaymentKelas', 
+            'rejectedPaymentSewaAlat'
+        ));
     }
 
     /**

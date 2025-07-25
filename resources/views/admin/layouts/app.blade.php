@@ -88,9 +88,25 @@
                 
                 <a href="{{ route('admin.bookings.index') }}" class="flex items-center px-4 sm:px-6 py-2.5 sm:py-3 text-sm sm:text-base text-white hover:bg-white hover:bg-opacity-20 hover:text-white transition-colors {{ request()->routeIs('admin.bookings.*') ? 'sidebar-active text-white' : '' }}">
                     <i class="fas fa-calendar-check w-4 h-4 sm:w-5 sm:h-5 mr-3"></i>
-                    <span>Kelola Booking</span>
+                    <span>Kelola Booking Kolam</span>
                     @if(isset($pendingBookings) && $pendingBookings > 0)
                         <span class="ml-auto bg-red-500 text-white text-xs px-2 py-1 rounded-full">{{ $pendingBookings }}</span>
+                    @endif
+                </a>
+                
+                <a href="{{ route('admin.booking-kelas.index') }}" class="flex items-center px-4 sm:px-6 py-2.5 sm:py-3 text-sm sm:text-base text-white hover:bg-white hover:bg-opacity-20 hover:text-white transition-colors {{ request()->routeIs('admin.booking-kelas.*') ? 'sidebar-active text-white' : '' }}">
+                    <i class="fas fa-swimming-pool w-4 h-4 sm:w-5 sm:h-5 mr-3"></i>
+                    <span>Kelola Booking Kelas</span>
+                    @if(isset($pendingBookingKelas) && $pendingBookingKelas > 0)
+                        <span class="ml-auto bg-red-500 text-white text-xs px-2 py-1 rounded-full">{{ $pendingBookingKelas }}</span>
+                    @endif
+                </a>
+                
+                <a href="{{ route('admin.booking-sewa-alat.index') }}" class="flex items-center px-4 sm:px-6 py-2.5 sm:py-3 text-sm sm:text-base text-white hover:bg-white hover:bg-opacity-20 hover:text-white transition-colors {{ request()->routeIs('admin.booking-sewa-alat.*') ? 'sidebar-active text-white' : '' }}">
+                    <i class="fas fa-tools w-4 h-4 sm:w-5 sm:h-5 mr-3"></i>
+                    <span>Kelola Sewa Alat</span>
+                    @if(isset($pendingBookingSewaAlat) && $pendingBookingSewaAlat > 0)
+                        <span class="ml-auto bg-red-500 text-white text-xs px-2 py-1 rounded-full">{{ $pendingBookingSewaAlat }}</span>
                     @endif
                 </a>
                 

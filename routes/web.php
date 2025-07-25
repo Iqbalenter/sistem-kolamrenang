@@ -5,6 +5,8 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\BookingController;
+use App\Http\Controllers\BookingKelasController;
+use App\Http\Controllers\BookingSewaAlatController;
 
 // Route untuk halaman utama (welcome/landing page)
 Route::get('/', function () {
@@ -40,6 +42,28 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     Route::patch('/bookings/{booking}/reject-payment', [BookingController::class, 'rejectPayment'])->name('admin.bookings.reject-payment');
     Route::patch('/bookings/{booking}/complete', [BookingController::class, 'complete'])->name('admin.bookings.complete');
     Route::delete('/bookings/{booking}', [BookingController::class, 'deleteBooking'])->name('admin.bookings.delete');
+    
+    // Routes untuk booking kelas admin
+    Route::get('/booking-kelas', [BookingKelasController::class, 'adminIndex'])->name('admin.booking-kelas.index');
+    Route::get('/booking-kelas/{bookingKelas}', [BookingKelasController::class, 'show'])->name('admin.booking-kelas.show');
+    Route::patch('/booking-kelas/{bookingKelas}/approve', [BookingKelasController::class, 'approve'])->name('admin.booking-kelas.approve');
+    Route::patch('/booking-kelas/{bookingKelas}/reject', [BookingKelasController::class, 'reject'])->name('admin.booking-kelas.reject');
+    Route::patch('/booking-kelas/{bookingKelas}/approve-payment', [BookingKelasController::class, 'approvePayment'])->name('admin.booking-kelas.approve-payment');
+    Route::patch('/booking-kelas/{bookingKelas}/reject-payment', [BookingKelasController::class, 'rejectPayment'])->name('admin.booking-kelas.reject-payment');
+    Route::patch('/booking-kelas/{bookingKelas}/confirm', [BookingKelasController::class, 'confirm'])->name('admin.booking-kelas.confirm');
+    Route::patch('/booking-kelas/{bookingKelas}/complete', [BookingKelasController::class, 'complete'])->name('admin.booking-kelas.complete');
+    Route::delete('/booking-kelas/{bookingKelas}', [BookingKelasController::class, 'deleteBooking'])->name('admin.booking-kelas.delete');
+    
+    // Routes untuk booking sewa alat admin
+    Route::get('/booking-sewa-alat', [BookingSewaAlatController::class, 'adminIndex'])->name('admin.booking-sewa-alat.index');
+    Route::get('/booking-sewa-alat/{bookingSewaAlat}', [BookingSewaAlatController::class, 'show'])->name('admin.booking-sewa-alat.show');
+    Route::patch('/booking-sewa-alat/{bookingSewaAlat}/approve', [BookingSewaAlatController::class, 'approve'])->name('admin.booking-sewa-alat.approve');
+    Route::patch('/booking-sewa-alat/{bookingSewaAlat}/reject', [BookingSewaAlatController::class, 'reject'])->name('admin.booking-sewa-alat.reject');
+    Route::patch('/booking-sewa-alat/{bookingSewaAlat}/approve-payment', [BookingSewaAlatController::class, 'approvePayment'])->name('admin.booking-sewa-alat.approve-payment');
+    Route::patch('/booking-sewa-alat/{bookingSewaAlat}/reject-payment', [BookingSewaAlatController::class, 'rejectPayment'])->name('admin.booking-sewa-alat.reject-payment');
+    Route::patch('/booking-sewa-alat/{bookingSewaAlat}/confirm', [BookingSewaAlatController::class, 'confirm'])->name('admin.booking-sewa-alat.confirm');
+    Route::patch('/booking-sewa-alat/{bookingSewaAlat}/complete', [BookingSewaAlatController::class, 'complete'])->name('admin.booking-sewa-alat.complete');
+    Route::delete('/booking-sewa-alat/{bookingSewaAlat}', [BookingSewaAlatController::class, 'deleteBooking'])->name('admin.booking-sewa-alat.delete');
 });
 
 // Routes untuk User
@@ -61,4 +85,24 @@ Route::middleware(['auth', 'user'])->prefix('user')->group(function () {
     Route::get('/booking/{booking}/payment', [BookingController::class, 'showPayment'])->name('user.booking.payment');
     Route::post('/booking/{booking}/select-payment-method', [BookingController::class, 'selectPaymentMethod'])->name('user.booking.select-payment-method');
     Route::post('/booking/{booking}/upload-payment', [BookingController::class, 'uploadPayment'])->name('user.booking.upload-payment');
+    
+    // Routes untuk booking kelas user
+    Route::get('/booking-kelas/create', [BookingKelasController::class, 'create'])->name('user.booking.kelas.create');
+    Route::post('/booking-kelas', [BookingKelasController::class, 'store'])->name('user.booking.kelas.store');
+    Route::get('/booking-kelas/history', [BookingKelasController::class, 'history'])->name('user.booking.kelas.history');
+    Route::get('/booking-kelas/{bookingKelas}', [BookingKelasController::class, 'show'])->name('user.booking.kelas.show');
+    Route::get('/booking-kelas/{bookingKelas}/payment', [BookingKelasController::class, 'showPayment'])->name('user.booking.kelas.payment');
+    Route::post('/booking-kelas/{bookingKelas}/select-payment-method', [BookingKelasController::class, 'selectPaymentMethod'])->name('user.booking.kelas.select-payment-method');
+    Route::post('/booking-kelas/{bookingKelas}/upload-payment', [BookingKelasController::class, 'uploadPayment'])->name('user.booking.kelas.upload-payment');
+    Route::delete('/booking-kelas/{bookingKelas}/cancel', [BookingKelasController::class, 'cancel'])->name('user.booking.kelas.cancel');
+    
+    // Routes untuk booking sewa alat user
+    Route::get('/booking-sewa-alat/create', [BookingSewaAlatController::class, 'create'])->name('user.booking.sewa-alat.create');
+    Route::post('/booking-sewa-alat', [BookingSewaAlatController::class, 'store'])->name('user.booking.sewa-alat.store');
+    Route::get('/booking-sewa-alat/history', [BookingSewaAlatController::class, 'history'])->name('user.booking.sewa-alat.history');
+    Route::get('/booking-sewa-alat/{bookingSewaAlat}', [BookingSewaAlatController::class, 'show'])->name('user.booking.sewa-alat.show');
+    Route::get('/booking-sewa-alat/{bookingSewaAlat}/payment', [BookingSewaAlatController::class, 'showPayment'])->name('user.booking.sewa-alat.payment');
+    Route::post('/booking-sewa-alat/{bookingSewaAlat}/select-payment-method', [BookingSewaAlatController::class, 'selectPaymentMethod'])->name('user.booking.sewa-alat.select-payment-method');
+    Route::post('/booking-sewa-alat/{bookingSewaAlat}/upload-payment', [BookingSewaAlatController::class, 'uploadPayment'])->name('user.booking.sewa-alat.upload-payment');
+    Route::delete('/booking-sewa-alat/{bookingSewaAlat}/cancel', [BookingSewaAlatController::class, 'cancel'])->name('user.booking.sewa-alat.cancel');
 });

@@ -54,6 +54,18 @@ class User extends Authenticatable
         return $this->hasMany(Booking::class);
     }
 
+    // Relationship dengan BookingKelas
+    public function bookingKelas(): HasMany
+    {
+        return $this->hasMany(BookingKelas::class);
+    }
+
+    // Relationship dengan BookingSewaAlat
+    public function bookingSewaAlat(): HasMany
+    {
+        return $this->hasMany(BookingSewaAlat::class);
+    }
+
     // Method untuk check role
     public function isAdmin(): bool
     {

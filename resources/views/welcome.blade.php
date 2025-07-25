@@ -197,7 +197,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 lg:gap-8">
                 <div class="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden" data-aos="fade-up" data-aos-delay="100">
                     <div class="relative overflow-hidden">
-                        <img src="https://images.unsplash.com/photo-1571902943202-507ec2618e8f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Kolam Dewasa" class="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-300">
+                        <img src="https://images.unsplash.com/photo-1558617320-e695f0d420de?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Kolam Dewasa" class="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-300">
                         <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
                         <div class="absolute bottom-4 left-4 text-white">
                             <span class="bg-primary px-3 py-1 rounded-full text-sm font-semibold">Utama</span>
@@ -217,7 +217,7 @@
                 
                 <div class="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden" data-aos="fade-up" data-aos-delay="200">
                     <div class="relative overflow-hidden">
-                        <img src="https://images.unsplash.com/photo-1530549387789-4c1017266635?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Kolam Anak" class="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-300">
+                        <img src="{{ asset('kolam.png') }}" alt="Kolam Anak" class="w-full h-64 object-cover group-hover:scale-110 transition-transform duration-300">
                         <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
                         <div class="absolute bottom-4 left-4 text-white">
                             <span class="bg-accent px-3 py-1 rounded-full text-sm font-semibold">Family</span>
