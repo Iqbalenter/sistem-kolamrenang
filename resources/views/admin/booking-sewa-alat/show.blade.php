@@ -1,15 +1,10 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Detail Booking Sewa Alat #{{ $bookingSewaAlat->id }} - Admin Panel</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
-</head>
-<body class="bg-gray-50">
-    @include('components.admin-navbar')
+@extends('admin.layouts.app')
 
+@section('title', 'Detail Booking Sewa Alat #' . $bookingSewaAlat->id)
+@section('page-title', 'Detail Booking Sewa Alat')
+@section('page-description', 'Detail lengkap booking sewa alat')
+
+@section('content')
     <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
         <!-- Header -->
         <div class="bg-white rounded-lg shadow-md p-6 mb-6">
@@ -74,7 +69,7 @@
                         <dl class="grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2">
                             <div>
                                 <dt class="text-sm font-medium text-gray-500">Tanggal Booking</dt>
-                                <dd class="mt-1 text-sm text-gray-900">{{ $bookingSewaAlat->created_at->format('d F Y H:i') }}</dd>
+                                <dd class="mt-1 text-sm text-gray-900">{{ $bookingSewaAlat->created_at ? $bookingSewaAlat->created_at->format('d F Y H:i') : 'N/A' }}</dd>
                             </div>
                             <div>
                                 <dt class="text-sm font-medium text-gray-500">Status Booking</dt>
@@ -103,7 +98,7 @@
                             </div>
                             <div>
                                 <dt class="text-sm font-medium text-gray-500">Total Harga</dt>
-                                <dd class="mt-1 text-sm font-medium text-gray-900">Rp {{ number_format($bookingSewaAlat->total_harga, 0, ',', '.') }}</dd>
+                                <dd class="mt-1 text-sm font-medium text-gray-900">Rp {{ number_format($bookingSewaAlat->total_harga ?? 0, 0, ',', '.') }}</dd>
                             </div>
                         </dl>
                     </div>
@@ -118,15 +113,15 @@
                         <dl class="grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2">
                             <div>
                                 <dt class="text-sm font-medium text-gray-500">Nama Penyewa</dt>
-                                <dd class="mt-1 text-sm text-gray-900">{{ $bookingSewaAlat->nama_penyewa }}</dd>
+                                <dd class="mt-1 text-sm text-gray-900">{{ $bookingSewaAlat->nama_penyewa ?? 'N/A' }}</dd>
                             </div>
                             <div>
                                 <dt class="text-sm font-medium text-gray-500">Nomor Telepon</dt>
-                                <dd class="mt-1 text-sm text-gray-900">{{ $bookingSewaAlat->telepon }}</dd>
+                                <dd class="mt-1 text-sm text-gray-900">{{ $bookingSewaAlat->nomor_telepon ?? 'N/A' }}</dd>
                             </div>
                             <div>
                                 <dt class="text-sm font-medium text-gray-500">Email</dt>
-                                <dd class="mt-1 text-sm text-gray-900">{{ $bookingSewaAlat->email }}</dd>
+                                <dd class="mt-1 text-sm text-gray-900">{{ $bookingSewaAlat->email ?? 'N/A' }}</dd>
                             </div>
                             <div>
                                 <dt class="text-sm font-medium text-gray-500">User Account</dt>
@@ -149,27 +144,41 @@
                             </div>
                             <div>
                                 <dt class="text-sm font-medium text-gray-500">Jumlah Alat</dt>
-                                <dd class="mt-1 text-sm text-gray-900">{{ $bookingSewaAlat->jumlah_alat }} buah</dd>
+                                <dd class="mt-1 text-sm text-gray-900">{{ $bookingSewaAlat->jumlah_alat ?? 0 }} buah</dd>
                             </div>
                             <div>
                                 <dt class="text-sm font-medium text-gray-500">Tanggal Sewa</dt>
-                                <dd class="mt-1 text-sm text-gray-900">{{ $bookingSewaAlat->tanggal_sewa->format('d F Y') }}</dd>
+                                <dd class="mt-1 text-sm text-gray-900">{{ $bookingSewaAlat->tanggal_sewa ? $bookingSewaAlat->tanggal_sewa->format('d F Y') : 'N/A' }}</dd>
                             </div>
                             <div>
-                                <dt class="text-sm font-medium text-gray-500">Waktu Sewa</dt>
-                                <dd class="mt-1 text-sm text-gray-900">{{ \Carbon\Carbon::parse($bookingSewaAlat->jam_mulai)->format('H:i') }} - {{ \Carbon\Carbon::parse($bookingSewaAlat->jam_selesai)->format('H:i') }}</dd>
+                                <dt class="text-sm font-medium text-gray-500">Jenis Jaminan</dt>
+                                <dd class="mt-1 text-sm text-gray-900">{{ $bookingSewaAlat->jenis_jaminan_label }}</dd>
                             </div>
                             <div>
                                 <dt class="text-sm font-medium text-gray-500">Harga per Item</dt>
-                                <dd class="mt-1 text-sm text-gray-900">Rp {{ number_format($bookingSewaAlat->harga_per_item, 0, ',', '.') }}</dd>
-                            </div>
-                            <div>
-                                <dt class="text-sm font-medium text-gray-500">Durasi</dt>
-                                <dd class="mt-1 text-sm text-gray-900">{{ $bookingSewaAlat->durasi }} jam</dd>
+                                <dd class="mt-1 text-sm text-gray-900">Rp {{ number_format($bookingSewaAlat->harga_per_item ?? 0, 0, ',', '.') }}</dd>
                             </div>
                         </dl>
                     </div>
                 </div>
+
+                <!-- Foto Jaminan -->
+                @if($bookingSewaAlat->foto_jaminan)
+                <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                    <div class="px-4 py-5 sm:px-6 border-b border-gray-200">
+                        <h3 class="text-lg font-medium text-gray-900">Foto Jaminan</h3>
+                    </div>
+                    <div class="px-4 py-5 sm:p-6">
+                        <div class="flex justify-center">
+                            <img src="{{ Storage::url($bookingSewaAlat->foto_jaminan) }}" 
+                                 alt="Foto Jaminan" 
+                                 class="max-w-full h-auto rounded-lg border cursor-pointer max-h-96"
+                                 onclick="openImageModal('{{ Storage::url($bookingSewaAlat->foto_jaminan) }}')">
+                        </div>
+                        <p class="text-sm text-gray-500 mt-2 text-center">Klik gambar untuk memperbesar</p>
+                    </div>
+                </div>
+                @endif
 
                 <!-- Catatan -->
                 @if($bookingSewaAlat->catatan)
@@ -292,11 +301,11 @@
                             </div>
                             <div>
                                 <dt class="text-sm font-medium text-gray-500">Provider</dt>
-                                <dd class="mt-1 text-sm text-gray-900">{{ $bookingSewaAlat->provider_pembayaran }}</dd>
+                                <dd class="mt-1 text-sm text-gray-900">{{ $bookingSewaAlat->provider_pembayaran ?? 'N/A' }}</dd>
                             </div>
                             <div>
                                 <dt class="text-sm font-medium text-gray-500">Nomor Tujuan</dt>
-                                <dd class="mt-1 text-sm text-gray-900">{{ $bookingSewaAlat->nomor_tujuan }}</dd>
+                                <dd class="mt-1 text-sm text-gray-900">{{ $bookingSewaAlat->nomor_tujuan ?? 'N/A' }}</dd>
                             </div>
                             @if($bookingSewaAlat->bukti_pembayaran)
                             <div>
@@ -513,5 +522,4 @@
             }
         }
     </script>
-</body>
-</html>
+@endsection

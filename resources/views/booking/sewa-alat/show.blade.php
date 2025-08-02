@@ -97,12 +97,12 @@
                             <span class="font-medium">{{ $bookingSewaAlat->tanggal_sewa->format('d F Y') }}</span>
                         </div>
                         <div class="flex justify-between">
-                            <span class="text-gray-600">Waktu:</span>
-                            <span class="font-medium">{{ $bookingSewaAlat->jam_mulai->format('H:i') }} - {{ $bookingSewaAlat->jam_selesai->format('H:i') }}</span>
+                            <span class="text-gray-600">Jaminan:</span>
+                            <span class="font-medium">{{ $bookingSewaAlat->jenis_jaminan_label }}</span>
                         </div>
                         <div class="flex justify-between">
-                            <span class="text-gray-600">Durasi:</span>
-                            <span class="font-medium">{{ $bookingSewaAlat->durasi }} jam</span>
+                            <span class="text-gray-600">Status Pengembalian:</span>
+                            <span class="font-medium">{{ $bookingSewaAlat->alat_dikembalikan ? 'Sudah Dikembalikan' : 'Belum Dikembalikan' }}</span>
                         </div>
                         <div class="flex justify-between">
                             <span class="text-gray-600">Jumlah Alat:</span>
@@ -118,10 +118,10 @@
                         </div>
                     </div>
 
-                    @if($bookingSewaAlat->keterangan)
+                    @if($bookingSewaAlat->catatan)
                         <div class="mt-4 pt-4 border-t">
-                            <span class="text-gray-600 block mb-1">Keterangan:</span>
-                            <p class="text-gray-900">{{ $bookingSewaAlat->keterangan }}</p>
+                            <span class="text-gray-600 block mb-1">Catatan:</span>
+                            <p class="text-gray-900">{{ $bookingSewaAlat->catatan }}</p>
                         </div>
                     @endif
                 </div>
@@ -144,12 +144,7 @@
                                 <span class="text-gray-600">Nomor Tujuan:</span>
                                 <span class="font-medium">{{ $bookingSewaAlat->nomor_tujuan }}</span>
                             </div>
-                            @if($bookingSewaAlat->tanggal_bayar)
-                                <div class="flex justify-between">
-                                    <span class="text-gray-600">Tanggal Bayar:</span>
-                                    <span class="font-medium">{{ $bookingSewaAlat->tanggal_bayar->format('d F Y H:i') }}</span>
-                                </div>
-                            @endif
+
                         </div>
 
                         <!-- Bukti Pembayaran -->
@@ -200,7 +195,7 @@
                         </div>
                     @endif
 
-                    @if($bookingSewaAlat->status === 'menunggu_konfirmasi' || $bookingSewaAlat->status_pembayaran === 'belum_bayar')
+                    @if($bookingSewaAlat->status === 'pending' || $bookingSewaAlat->status_pembayaran === 'belum_bayar')
                         <form action="{{ route('user.booking.sewa-alat.cancel', $bookingSewaAlat) }}" method="POST" 
                               onsubmit="return confirm('Apakah Anda yakin ingin membatalkan booking ini?')">
                             @csrf
@@ -211,6 +206,13 @@
                             </button>
                         </form>
                     @endif
+                </div>
+
+                <div class="mt-4">
+                    <a href="{{ route('user.pdf.booking-sewa-alat-detail', $bookingSewaAlat) }}" 
+                       class="bg-red-600 text-white py-3 px-6 rounded-lg hover:bg-red-700 text-center font-medium block">
+                        📄 Export PDF
+                    </a>
                 </div>
 
                 @if($bookingSewaAlat->status === 'dikonfirmasi')

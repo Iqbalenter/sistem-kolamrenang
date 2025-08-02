@@ -23,6 +23,7 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
+        'status_membership',
     ];
 
     /**
@@ -75,5 +76,46 @@ class User extends Authenticatable
     public function isUser(): bool
     {
         return $this->role === 'user';
+    }
+
+    // Method untuk check dan update status membership
+    public function checkAndUpdateMembershipStatus(): void
+    {
+        // Hitung total booking dari semua jenis
+        $totalBookingKolam = $this->bookings()->count();
+        $totalBookingKelas = $this->bookingKelas()->count();
+        $totalBookingSewaAlat = $this->bookingSewaAlat()->count();
+        $totalBookings = $totalBookingKolam + $totalBookingKelas + $totalBookingSewaAlat;
+
+        // Jika sudah 30x booking dan masih regular, update ke member
+        if ($totalBookings >= 30 && $this->status_membership === 'regular') {
+            $this->update(['status_membership' => 'member']);
+        }
+    }
+
+    // Method untuk mendapatkan sisa booking yang diperlukan untuk menjadi member
+    public function getRemainingBookingsForMember(): int
+    {
+        if ($this->status_membership === 'member') {
+            return 0; // Sudah member
+        }
+
+        $totalBookingKolam = $this->bookings()->count();
+        $totalBookingKelas = $this->bookingKelas()->count();
+        $totalBookingSewaAlat = $this->bookingSewaAlat()->count();
+        $totalBookings = $totalBookingKolam + $totalBookingKelas + $totalBookingSewaAlat;
+
+        $remaining = 30 - $totalBookings;
+        return max(0, $remaining);
+    }
+
+    // Method untuk mendapatkan label status membership
+    public function getMembershipStatusLabelAttribute(): string
+    {
+        return match($this->status_membership) {
+            'regular' => 'Regular',
+            'member' => 'Member',
+            default => 'Unknown'
+        };
     }
 }

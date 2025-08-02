@@ -95,8 +95,8 @@ class Booking extends Model
     public function getJenisKolamLabelAttribute()
     {
         return match($this->jenis_kolam) {
-            'kolam_anak' => 'Kolam Anak',
-            'kolam_utama' => 'Kolam Utama',
+            'kolam_anak' => 'Ticket Anak',
+            'kolam_utama' => 'Ticket Utama',
             default => 'Unknown'
         };
     }

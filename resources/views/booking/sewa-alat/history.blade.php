@@ -83,16 +83,16 @@
                                             <p class="font-medium">{{ $booking->tanggal_sewa->format('d/m/Y') }}</p>
                                         </div>
                                         <div>
-                                            <span class="text-gray-600">Waktu:</span>
-                                            <p class="font-medium">{{ $booking->jam_mulai->format('H:i') }} - {{ $booking->jam_selesai->format('H:i') }}</p>
+                                            <span class="text-gray-600">Jaminan:</span>
+                                            <p class="font-medium">{{ $booking->jenis_jaminan_label }}</p>
                                         </div>
                                         <div>
                                             <span class="text-gray-600">Jumlah Alat:</span>
                                             <p class="font-medium">{{ $booking->jumlah_alat }} unit</p>
                                         </div>
                                         <div>
-                                            <span class="text-gray-600">Durasi:</span>
-                                            <p class="font-medium">{{ $booking->durasi }} jam</p>
+                                            <span class="text-gray-600">Status Pengembalian:</span>
+                                            <p class="font-medium">{{ $booking->alat_dikembalikan ? 'Sudah Dikembalikan' : 'Belum Dikembalikan' }}</p>
                                         </div>
                                         <div>
                                             <span class="text-gray-600">Total Harga:</span>

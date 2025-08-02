@@ -108,12 +108,12 @@
                                         <dd class="text-sm font-medium">{{ $bookingSewaAlat->tanggal_sewa->format('d M Y') }}</dd>
                                     </div>
                                     <div class="flex justify-between">
-                                        <dt class="text-sm text-gray-500">Waktu:</dt>
-                                        <dd class="text-sm font-medium">{{ $bookingSewaAlat->jam_mulai->format('H:i') }} - {{ $bookingSewaAlat->jam_selesai->format('H:i') }}</dd>
+                                        <dt class="text-sm text-gray-500">Jaminan:</dt>
+                                        <dd class="text-sm font-medium">{{ $bookingSewaAlat->jenis_jaminan_label }}</dd>
                                     </div>
                                     <div class="flex justify-between">
-                                        <dt class="text-sm text-gray-500">Durasi:</dt>
-                                        <dd class="text-sm font-medium">{{ $bookingSewaAlat->durasi }} jam</dd>
+                                        <dt class="text-sm text-gray-500">Status Pengembalian:</dt>
+                                        <dd class="text-sm font-medium">{{ $bookingSewaAlat->alat_dikembalikan ? 'Sudah Dikembalikan' : 'Belum Dikembalikan' }}</dd>
                                     </div>
                                     <div class="flex justify-between">
                                         <dt class="text-sm text-gray-500">Jumlah Alat:</dt>
@@ -187,8 +187,8 @@
                                 <dd class="text-sm font-medium">Rp {{ number_format($bookingSewaAlat->harga_per_jam, 0, ',', '.') }}</dd>
                             </div>
                             <div class="flex justify-between">
-                                <dt class="text-sm text-gray-500">Durasi:</dt>
-                                <dd class="text-sm font-medium">{{ $bookingSewaAlat->durasi }} jam</dd>
+                                <dt class="text-sm text-gray-500">Sewa per Hari:</dt>
+                                <dd class="text-sm font-medium">1 hari</dd>
                             </div>
                             <div class="flex justify-between">
                                 <dt class="text-sm text-gray-500">Jumlah alat:</dt>

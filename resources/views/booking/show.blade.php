@@ -204,8 +204,8 @@
                         <h3 class="text-lg font-semibold mb-4">Ringkasan Harga</h3>
                         <dl class="space-y-3">
                             <div class="flex justify-between">
-                                <dt class="text-sm text-gray-500">Jenis Kolam:</dt>
-                                <dd class="text-sm font-medium">{{ $booking->jenis_kolam_label ?? 'Kolam Utama' }}</dd>
+                                <dt class="text-sm text-gray-500">Harga Ticket:</dt>
+                                <dd class="text-sm font-medium">{{ $booking->jenis_kolam_label ?? 'Ticket Utama' }}</dd>
                             </div>
                             <div class="flex justify-between">
                                 <dt class="text-sm text-gray-500">Tarif per jam:</dt>
@@ -280,6 +280,11 @@
                             <a href="{{ route('user.booking.history') }}" 
                                 class="w-full bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700 text-center block">
                                 Kembali ke History
+                            </a>
+                            
+                            <a href="{{ route('user.pdf.booking-kolam-detail', $booking) }}" 
+                                class="w-full bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 text-center block">
+                                📄 Export PDF
                             </a>
                         </div>
                     </div>

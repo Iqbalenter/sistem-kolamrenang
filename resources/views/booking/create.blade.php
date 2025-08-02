@@ -73,9 +73,9 @@
                     <div class="border-b pb-6">
                         <h3 class="text-lg font-semibold text-gray-900 mb-4">Detail Booking</h3>
                         
-                        <!-- Pilihan Jenis Kolam -->
+                        <!-- Pilihan Harga Ticket -->
                         <div class="mb-4">
-                            <label class="block text-sm font-medium text-gray-700 mb-3">Pilih Jenis Kolam</label>
+                            <label class="block text-sm font-medium text-gray-700 mb-3">Pilih Harga Ticket</label>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div class="relative">
                                     <input type="radio" name="jenis_kolam" id="kolam_anak" value="kolam_anak" 
@@ -85,9 +85,8 @@
                                         <div class="flex items-center">
                                             <div class="text-2xl mr-3">🧒</div>
                                             <div>
-                                                <h4 class="font-semibold text-gray-900">Kolam Anak</h4>
+                                                <h4 class="font-semibold text-gray-900">Ticket Anak</h4>
                                                 <p class="text-sm text-gray-600">Rp 15.000/jam</p>
-                                                <p class="text-xs text-gray-500">Ukuran 10m x 8m, Kedalaman 0.5-1.0m</p>
                                             </div>
                                         </div>
                                     </label>
@@ -101,9 +100,8 @@
                                         <div class="flex items-center">
                                             <div class="text-2xl mr-3">🏊‍♂️</div>
                                             <div>
-                                                <h4 class="font-semibold text-gray-900">Kolam Utama</h4>
+                                                <h4 class="font-semibold text-gray-900">Ticket Utama</h4>
                                                 <p class="text-sm text-gray-600">Rp 25.000/jam</p>
-                                                <p class="text-xs text-gray-500">Ukuran 25m x 12m, Kedalaman 1.5-2.5m</p>
                                             </div>
                                         </div>
                                     </label>
@@ -153,9 +151,9 @@
                     <div class="bg-blue-50 p-4 rounded-lg">
                         <h4 class="font-semibold text-blue-900 mb-2">Informasi Harga & Pembayaran</h4>
                         <div id="price-info" class="text-blue-800">
-                            <p>• Kolam Anak: <span class="font-semibold">Rp 15.000 per jam</span></p>
-                            <p>• Kolam Utama: <span class="font-semibold">Rp 25.000 per jam</span></p>
-                            <p>• Total harga akan dihitung otomatis berdasarkan jenis kolam dan durasi booking</p>
+                            <p>• Ticket Anak: <span class="font-semibold">Rp 15.000 per jam</span></p>
+                            <p>• Ticket Utama: <span class="font-semibold">Rp 25.000 per jam</span></p>
+                            <p>• Total harga akan dihitung otomatis berdasarkan harga ticket dan durasi booking</p>
                             <p>• Pembayaran dilakukan setelah booking disetujui admin</p>
                             <div id="calculated-price" class="mt-2 p-2 bg-white rounded-md hidden">
                                 <p class="font-bold text-lg text-blue-900">Estimasi Total: <span id="total-amount">Rp 0</span></p>

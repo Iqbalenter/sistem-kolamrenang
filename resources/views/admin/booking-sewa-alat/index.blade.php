@@ -116,8 +116,8 @@
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <div class="text-sm font-medium text-gray-900">{{ $booking->jenis_alat_label }}</div>
                                 <div class="text-sm text-gray-500">{{ $booking->tanggal_sewa->format('d M Y') }}</div>
-                                <div class="text-sm text-gray-500">{{ \Carbon\Carbon::parse($booking->jam_mulai)->format('H:i') }} - {{ \Carbon\Carbon::parse($booking->jam_selesai)->format('H:i') }}</div>
-                                <div class="text-sm text-gray-500">{{ $booking->jumlah_alat }} alat ({{ $booking->durasi }} jam)</div>
+                                <div class="text-sm text-gray-500">{{ $booking->jenis_jaminan_label }}</div>
+                                <div class="text-sm text-gray-500">{{ $booking->jumlah_alat }} alat</div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 @php
@@ -253,12 +253,12 @@
                             <span class="font-medium">{{ $booking->tanggal_sewa->format('d M Y') }}</span>
                         </div>
                         <div class="flex justify-between text-sm">
-                            <span class="text-gray-500">Waktu:</span>
-                            <span class="font-medium">{{ \Carbon\Carbon::parse($booking->jam_mulai)->format('H:i') }} - {{ \Carbon\Carbon::parse($booking->jam_selesai)->format('H:i') }}</span>
+                            <span class="text-gray-500">Jenis Jaminan:</span>
+                            <span class="font-medium">{{ $booking->jenis_jaminan_label }}</span>
                         </div>
                         <div class="flex justify-between text-sm">
                             <span class="text-gray-500">Jumlah:</span>
-                            <span class="font-medium">{{ $booking->jumlah_alat }} alat ({{ $booking->durasi }} jam)</span>
+                            <span class="font-medium">{{ $booking->jumlah_alat }} alat</span>
                         </div>
                     </div>
 
@@ -329,7 +329,7 @@
                         @endif
                         
                         @if($booking->status_pembayaran === 'menunggu_konfirmasi')
-                            <button onclick="approvePayment({{ $booking->id }})"
+                            <button onclick="showApprovePaymentModal({{ $booking->id }})"
                                 class="flex-1 inline-flex items-center justify-center px-3 py-2 bg-green-100 text-green-700 rounded-lg hover:bg-green-200 transition-colors text-sm">
                                 <i class="fas fa-check mr-1"></i>
                                 Approve Payment
@@ -370,8 +370,8 @@
                 @method('PATCH')
                 <div class="mb-4">
                     <label class="block text-sm font-medium text-gray-700 mb-2">Alasan Penolakan</label>
-                    <textarea name="alasan_penolakan" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500" 
-                              rows="3" placeholder="Masukkan alasan penolakan..."></textarea>
+                    <textarea name="catatan_admin" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500" 
+                              rows="3" placeholder="Masukkan alasan penolakan..." required></textarea>
                 </div>
                 <div class="flex justify-end space-x-3">
                     <button type="button" onclick="closeRejectModal()" 
@@ -381,6 +381,34 @@
                     <button type="submit" 
                             class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700">
                         Tolak Booking
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Approve Payment Modal -->
+<div id="approvePaymentModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+    <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+        <div class="mt-3">
+            <h3 class="text-lg font-medium text-gray-900 mb-4">Setujui Pembayaran</h3>
+            <form id="approvePaymentForm" method="POST">
+                @csrf
+                @method('PATCH')
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Catatan (Opsional)</label>
+                    <textarea name="catatan_admin" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500" 
+                              rows="3" placeholder="Masukkan catatan untuk persetujuan..."></textarea>
+                </div>
+                <div class="flex justify-end space-x-3">
+                    <button type="button" onclick="closeApprovePaymentModal()" 
+                            class="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400">
+                        Batal
+                    </button>
+                    <button type="submit" 
+                            class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700">
+                        Setujui Pembayaran
                     </button>
                 </div>
             </form>
@@ -398,8 +426,8 @@
                 @method('PATCH')
                 <div class="mb-4">
                     <label class="block text-sm font-medium text-gray-700 mb-2">Alasan Penolakan</label>
-                    <textarea name="alasan_penolakan" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500" 
-                              rows="3" placeholder="Masukkan alasan penolakan pembayaran..."></textarea>
+                    <textarea name="catatan_admin" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500" 
+                              rows="3" placeholder="Masukkan alasan penolakan pembayaran..." required></textarea>
                 </div>
                 <div class="flex justify-end space-x-3">
                     <button type="button" onclick="closeRejectPaymentModal()" 
@@ -490,7 +518,7 @@ function approveBooking(bookingId) {
     if (confirm('Apakah Anda yakin ingin menyetujui booking ini?')) {
         const form = document.createElement('form');
         form.method = 'POST';
-        form.action = `{{ route('admin.booking-sewa-alat.index') }}/${bookingId}/approve`;
+        form.action = `/admin/booking-sewa-alat/${bookingId}/approve`;
         
         const csrfToken = document.createElement('input');
         csrfToken.type = 'hidden';
@@ -501,6 +529,52 @@ function approveBooking(bookingId) {
         methodField.type = 'hidden';
         methodField.name = '_method';
         methodField.value = 'PATCH';
+        
+        form.appendChild(csrfToken);
+        form.appendChild(methodField);
+        document.body.appendChild(form);
+        form.submit();
+    }
+}
+
+function approvePayment(bookingId) {
+    if (confirm('Apakah Anda yakin ingin menyetujui pembayaran ini?')) {
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = `/admin/booking-sewa-alat/${bookingId}/approve-payment`;
+        
+        const csrfToken = document.createElement('input');
+        csrfToken.type = 'hidden';
+        csrfToken.name = '_token';
+        csrfToken.value = '{{ csrf_token() }}';
+        
+        const methodField = document.createElement('input');
+        methodField.type = 'hidden';
+        methodField.name = '_method';
+        methodField.value = 'PATCH';
+        
+        form.appendChild(csrfToken);
+        form.appendChild(methodField);
+        document.body.appendChild(form);
+        form.submit();
+    }
+}
+
+function confirmDeleteBooking(bookingId, bookingNumber) {
+    if (confirm(`Apakah Anda yakin ingin menghapus booking ${bookingNumber}?`)) {
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = `/admin/booking-sewa-alat/${bookingId}`;
+        
+        const csrfToken = document.createElement('input');
+        csrfToken.type = 'hidden';
+        csrfToken.name = '_token';
+        csrfToken.value = '{{ csrf_token() }}';
+        
+        const methodField = document.createElement('input');
+        methodField.type = 'hidden';
+        methodField.name = '_method';
+        methodField.value = 'DELETE';
         
         form.appendChild(csrfToken);
         form.appendChild(methodField);
@@ -512,7 +586,7 @@ function approveBooking(bookingId) {
 function showRejectModal(bookingId) {
     const modal = document.getElementById('rejectModal');
     const form = document.getElementById('rejectForm');
-    form.action = `{{ route('admin.booking-sewa-alat.index') }}/${bookingId}/reject`;
+    form.action = `/admin/booking-sewa-alat/${bookingId}/reject`;
     modal.classList.remove('hidden');
 }
 
@@ -521,33 +595,22 @@ function closeRejectModal() {
     modal.classList.add('hidden');
 }
 
-function confirmPayment(bookingId) {
-    if (confirm('Apakah Anda yakin ingin mengkonfirmasi pembayaran ini?')) {
-        const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = `{{ route('admin.booking-sewa-alat.index') }}/${bookingId}/confirm-payment`;
-        
-        const csrfToken = document.createElement('input');
-        csrfToken.type = 'hidden';
-        csrfToken.name = '_token';
-        csrfToken.value = '{{ csrf_token() }}';
-        
-        const methodField = document.createElement('input');
-        methodField.type = 'hidden';
-        methodField.name = '_method';
-        methodField.value = 'PATCH';
-        
-        form.appendChild(csrfToken);
-        form.appendChild(methodField);
-        document.body.appendChild(form);
-        form.submit();
-    }
+function showApprovePaymentModal(bookingId) {
+    const modal = document.getElementById('approvePaymentModal');
+    const form = document.getElementById('approvePaymentForm');
+    form.action = `/admin/booking-sewa-alat/${bookingId}/approve-payment`;
+    modal.classList.remove('hidden');
+}
+
+function closeApprovePaymentModal() {
+    const modal = document.getElementById('approvePaymentModal');
+    modal.classList.add('hidden');
 }
 
 function showRejectPaymentModal(bookingId) {
     const modal = document.getElementById('rejectPaymentModal');
     const form = document.getElementById('rejectPaymentForm');
-    form.action = `{{ route('admin.booking-sewa-alat.index') }}/${bookingId}/reject-payment`;
+    form.action = `/admin/booking-sewa-alat/${bookingId}/reject-payment`;
     modal.classList.remove('hidden');
 }
 
@@ -560,12 +623,16 @@ function closeRejectPaymentModal() {
 window.onclick = function(event) {
     const rejectModal = document.getElementById('rejectModal');
     const rejectPaymentModal = document.getElementById('rejectPaymentModal');
+    const approvePaymentModal = document.getElementById('approvePaymentModal');
     
     if (event.target === rejectModal) {
         closeRejectModal();
     }
     if (event.target === rejectPaymentModal) {
         closeRejectPaymentModal();
+    }
+    if (event.target === approvePaymentModal) {
+        closeApprovePaymentModal();
     }
 }
 </script>

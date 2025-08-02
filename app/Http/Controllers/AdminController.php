@@ -79,7 +79,6 @@ class AdminController extends Controller
             ->where('status', 'approved')
             ->where('tanggal_sewa', '>=', Carbon::today())
             ->orderBy('tanggal_sewa', 'asc')
-            ->orderBy('jam_mulai', 'asc')
             ->take(5)
             ->get();
         

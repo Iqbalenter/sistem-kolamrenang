@@ -7,6 +7,9 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\BookingKelasController;
 use App\Http\Controllers\BookingSewaAlatController;
+use App\Http\Controllers\StokAlatController;
+use App\Http\Controllers\JenisAlatController;
+use App\Http\Controllers\PdfController;
 
 // Route untuk halaman utama (welcome/landing page)
 Route::get('/', function () {
@@ -60,10 +63,39 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     Route::patch('/booking-sewa-alat/{bookingSewaAlat}/approve', [BookingSewaAlatController::class, 'approve'])->name('admin.booking-sewa-alat.approve');
     Route::patch('/booking-sewa-alat/{bookingSewaAlat}/reject', [BookingSewaAlatController::class, 'reject'])->name('admin.booking-sewa-alat.reject');
     Route::patch('/booking-sewa-alat/{bookingSewaAlat}/approve-payment', [BookingSewaAlatController::class, 'approvePayment'])->name('admin.booking-sewa-alat.approve-payment');
+    Route::patch('/booking-sewa-alat/{bookingSewaAlat}/confirm-payment', [BookingSewaAlatController::class, 'confirmPayment'])->name('admin.booking-sewa-alat.confirm-payment');
     Route::patch('/booking-sewa-alat/{bookingSewaAlat}/reject-payment', [BookingSewaAlatController::class, 'rejectPayment'])->name('admin.booking-sewa-alat.reject-payment');
     Route::patch('/booking-sewa-alat/{bookingSewaAlat}/confirm', [BookingSewaAlatController::class, 'confirm'])->name('admin.booking-sewa-alat.confirm');
     Route::patch('/booking-sewa-alat/{bookingSewaAlat}/complete', [BookingSewaAlatController::class, 'complete'])->name('admin.booking-sewa-alat.complete');
+    Route::patch('/booking-sewa-alat/{bookingSewaAlat}/kembalikan-alat', [BookingSewaAlatController::class, 'kembalikanAlat'])->name('admin.booking-sewa-alat.kembalikan-alat');
+    Route::patch('/booking-sewa-alat/{bookingSewaAlat}/cancel-approved', [BookingSewaAlatController::class, 'cancelApproved'])->name('admin.booking-sewa-alat.cancel-approved');
     Route::delete('/booking-sewa-alat/{bookingSewaAlat}', [BookingSewaAlatController::class, 'deleteBooking'])->name('admin.booking-sewa-alat.delete');
+    
+    // Routes untuk kelola stok alat
+    Route::resource('stok-alat', StokAlatController::class, [
+        'names' => [
+            'index' => 'admin.stok-alat.index',
+            'create' => 'admin.stok-alat.create',
+            'store' => 'admin.stok-alat.store',
+            'edit' => 'admin.stok-alat.edit',
+            'update' => 'admin.stok-alat.update',
+            'destroy' => 'admin.stok-alat.destroy'
+        ]
+    ]);
+    Route::post('/stok-alat/{stokAlat}/adjust', [StokAlatController::class, 'adjustStok'])->name('admin.stok-alat.adjust');
+    
+    // Routes untuk kelola jenis alat
+    Route::resource('jenis-alat', JenisAlatController::class, [
+        'names' => [
+            'index' => 'admin.jenis-alat.index',
+            'create' => 'admin.jenis-alat.create',
+            'store' => 'admin.jenis-alat.store',
+            'show' => 'admin.jenis-alat.show',
+            'edit' => 'admin.jenis-alat.edit',
+            'update' => 'admin.jenis-alat.update',
+            'destroy' => 'admin.jenis-alat.destroy'
+        ]
+    ]);
 });
 
 // Routes untuk User
@@ -105,4 +137,15 @@ Route::middleware(['auth', 'user'])->prefix('user')->group(function () {
     Route::post('/booking-sewa-alat/{bookingSewaAlat}/select-payment-method', [BookingSewaAlatController::class, 'selectPaymentMethod'])->name('user.booking.sewa-alat.select-payment-method');
     Route::post('/booking-sewa-alat/{bookingSewaAlat}/upload-payment', [BookingSewaAlatController::class, 'uploadPayment'])->name('user.booking.sewa-alat.upload-payment');
     Route::delete('/booking-sewa-alat/{bookingSewaAlat}/cancel', [BookingSewaAlatController::class, 'cancel'])->name('user.booking.sewa-alat.cancel');
+    
+    // Routes untuk export PDF
+    Route::get('/pdf/booking-kolam', [PdfController::class, 'exportBookingKolam'])->name('user.pdf.booking-kolam');
+    Route::get('/pdf/booking-kelas', [PdfController::class, 'exportBookingKelas'])->name('user.pdf.booking-kelas');
+    Route::get('/pdf/booking-sewa-alat', [PdfController::class, 'exportBookingSewaAlat'])->name('user.pdf.booking-sewa-alat');
+    Route::get('/pdf/all-bookings', [PdfController::class, 'exportAllBookings'])->name('user.pdf.all-bookings');
+    
+    // Routes untuk export PDF detail booking
+    Route::get('/pdf/booking-kolam/{booking}/detail', [PdfController::class, 'exportBookingKolamDetail'])->name('user.pdf.booking-kolam-detail');
+    Route::get('/pdf/booking-kelas/{bookingKelas}/detail', [PdfController::class, 'exportBookingKelasDetail'])->name('user.pdf.booking-kelas-detail');
+    Route::get('/pdf/booking-sewa-alat/{bookingSewaAlat}/detail', [PdfController::class, 'exportBookingSewaAlatDetail'])->name('user.pdf.booking-sewa-alat-detail');
 });

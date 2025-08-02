@@ -17,6 +17,9 @@ class UserController extends Controller
     {
         $user = Auth::user();
         
+        // Check dan update status membership
+        $user->checkAndUpdateMembershipStatus();
+        
         // Hitung total booking dari semua jenis booking
         $totalBookingKolam = Booking::where('user_id', $user->id)->count();
         $totalBookingKelas = BookingKelas::where('user_id', $user->id)->count();

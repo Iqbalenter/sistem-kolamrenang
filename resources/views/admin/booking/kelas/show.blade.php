@@ -139,12 +139,7 @@
                         <span class="text-gray-600">Nomor Tujuan:</span>
                         <span class="font-medium">{{ $bookingKelas->nomor_tujuan }}</span>
                     </div>
-                    @if($bookingKelas->tanggal_bayar)
-                        <div class="flex justify-between">
-                            <span class="text-gray-600">Tanggal Bayar:</span>
-                            <span class="font-medium">{{ $bookingKelas->tanggal_bayar->format('d F Y H:i') }}</span>
-                        </div>
-                    @endif
+
                 </div>
 
                 <!-- Bukti Pembayaran -->

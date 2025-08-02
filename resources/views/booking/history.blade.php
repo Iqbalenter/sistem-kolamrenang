@@ -93,8 +93,8 @@
                                         </div>
                                         
                                         <div>
-                                            <p class="text-sm text-gray-500">Jenis Kolam</p>
-                                            <p class="font-medium">{{ $booking->jenis_kolam_label ?? 'Kolam Utama' }}</p>
+                                            <p class="text-sm text-gray-500">Harga Ticket</p>
+                                            <p class="font-medium">{{ $booking->jenis_kolam_label ?? 'Ticket Utama' }}</p>
                                             <p class="text-sm text-gray-600">Rp {{ number_format($booking->tarif_per_jam ?? 25000, 0, ',', '.') }}/jam</p>
                                         </div>
                                         

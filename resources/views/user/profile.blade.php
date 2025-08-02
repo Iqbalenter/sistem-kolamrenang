@@ -70,7 +70,7 @@
                             <dt class="text-xs sm:text-sm font-medium text-gray-500">Status Membership</dt>
                             <dd class="mt-1">
                                 <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
-                                    Regular Member
+                                    {{ Auth::user()->membership_status_label }} Member
                                 </span>
                             </dd>
                         </div>

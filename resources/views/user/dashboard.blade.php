@@ -142,7 +142,10 @@
                         </div>
                         <div class="ml-3">
                             <p class="text-sm font-medium text-white">Status</p>
-                            <p class="text-lg font-bold text-white">Regular</p>
+                            <p class="text-lg font-bold text-white">{{ $user->membership_status_label }}</p>
+                            @if($user->status_membership === 'regular')
+                                <p class="text-xs text-white opacity-75">{{ $user->getRemainingBookingsForMember() }} booking lagi untuk menjadi Member</p>
+                            @endif
                         </div>
                     </div>
                 </div>

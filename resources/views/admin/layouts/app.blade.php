@@ -110,6 +110,16 @@
                     @endif
                 </a>
                 
+                <a href="{{ route('admin.stok-alat.index') }}" class="flex items-center px-4 sm:px-6 py-2.5 sm:py-3 text-sm sm:text-base text-white hover:bg-white hover:bg-opacity-20 hover:text-white transition-colors {{ request()->routeIs('admin.stok-alat.*') ? 'sidebar-active text-white' : '' }}">
+                    <i class="fas fa-boxes w-4 h-4 sm:w-5 sm:h-5 mr-3"></i>
+                    <span>Kelola Stok Alat</span>
+                </a>
+                
+                <a href="{{ route('admin.jenis-alat.index') }}" class="flex items-center px-4 sm:px-6 py-2.5 sm:py-3 text-sm sm:text-base text-white hover:bg-white hover:bg-opacity-20 hover:text-white transition-colors {{ request()->routeIs('admin.jenis-alat.*') ? 'sidebar-active text-white' : '' }}">
+                    <i class="fas fa-tags w-4 h-4 sm:w-5 sm:h-5 mr-3"></i>
+                    <span>Kelola Jenis Alat</span>
+                </a>
+                
                 <a href="{{ route('admin.users') }}" class="flex items-center px-4 sm:px-6 py-2.5 sm:py-3 text-sm sm:text-base text-white hover:bg-white hover:bg-opacity-20 hover:text-white transition-colors {{ request()->routeIs('admin.users') ? 'sidebar-active text-white' : '' }}">
                     <i class="fas fa-users w-4 h-4 sm:w-5 sm:h-5 mr-3"></i>
                     <span>Kelola User</span>

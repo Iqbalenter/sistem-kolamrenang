@@ -411,11 +411,7 @@
                                         {{ $booking->tanggal_sewa ? $booking->tanggal_sewa->format('d/m/Y') : 'N/A' }}
                                     </div>
                                     <div class="text-xs sm:text-sm text-gray-500">
-                                        @if($booking->jam_mulai && $booking->jam_selesai)
-                                            {{ \Carbon\Carbon::parse($booking->jam_mulai)->format('H:i') }} - {{ \Carbon\Carbon::parse($booking->jam_selesai)->format('H:i') }}
-                                        @else
-                                            N/A
-                                        @endif
+                                        {{ $booking->jenis_jaminan_label ?? 'N/A' }}
                                     </div>
                                 </td>
                                 <td class="px-3 sm:px-4 py-2 sm:py-3 whitespace-nowrap">

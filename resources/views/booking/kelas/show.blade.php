@@ -140,12 +140,7 @@
                                 <span class="text-gray-600">Nomor Tujuan:</span>
                                 <span class="font-medium">{{ $bookingKelas->nomor_tujuan }}</span>
                             </div>
-                            @if($bookingKelas->tanggal_bayar)
-                                <div class="flex justify-between">
-                                    <span class="text-gray-600">Tanggal Bayar:</span>
-                                    <span class="font-medium">{{ $bookingKelas->tanggal_bayar->format('d F Y H:i') }}</span>
-                                </div>
-                            @endif
+                            
                         </div>
 
                         <!-- Bukti Pembayaran -->
@@ -207,6 +202,13 @@
                             </button>
                         </form>
                     @endif
+                </div>
+
+                <div class="mt-4">
+                    <a href="{{ route('user.pdf.booking-kelas-detail', $bookingKelas) }}" 
+                       class="bg-red-600 text-white py-3 px-6 rounded-lg hover:bg-red-700 text-center font-medium block">
+                        📄 Export PDF
+                    </a>
                 </div>
 
                 @if($bookingKelas->status === 'dikonfirmasi')

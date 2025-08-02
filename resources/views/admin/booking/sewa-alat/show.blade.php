@@ -79,6 +79,21 @@
                     <span class="text-gray-600">User ID:</span>
                     <span class="font-medium">{{ $bookingSewaAlat->user->name ?? 'N/A' }} (#{{ $bookingSewaAlat->user_id }})</span>
                 </div>
+                <div class="flex justify-between">
+                    <span class="text-gray-600">Jenis Jaminan:</span>
+                    <span class="font-medium">{{ $bookingSewaAlat->jenis_jaminan_label }}</span>
+                </div>
+                @if($bookingSewaAlat->foto_jaminan)
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Foto Jaminan:</span>
+                        <span class="font-medium">
+                            <img src="{{ Storage::url($bookingSewaAlat->foto_jaminan) }}" 
+                                 alt="Foto Jaminan" 
+                                 class="w-20 h-12 object-cover rounded cursor-pointer"
+                                 onclick="openImageModal('{{ Storage::url($bookingSewaAlat->foto_jaminan) }}')">
+                        </span>
+                    </div>
+                @endif
             </div>
         </div>
 
@@ -96,12 +111,12 @@
                     <span class="font-medium">{{ $bookingSewaAlat->tanggal_sewa->format('d F Y') }}</span>
                 </div>
                 <div class="flex justify-between">
-                    <span class="text-gray-600">Waktu:</span>
-                    <span class="font-medium">{{ $bookingSewaAlat->jam_mulai->format('H:i') }} - {{ $bookingSewaAlat->jam_selesai->format('H:i') }}</span>
+                    <span class="text-gray-600">Jenis Jaminan:</span>
+                    <span class="font-medium">{{ $bookingSewaAlat->jenis_jaminan_label }}</span>
                 </div>
                 <div class="flex justify-between">
-                    <span class="text-gray-600">Durasi:</span>
-                    <span class="font-medium">{{ $bookingSewaAlat->durasi }} jam</span>
+                    <span class="text-gray-600">Status Pengembalian:</span>
+                    <span class="font-medium">{{ $bookingSewaAlat->alat_dikembalikan ? 'Sudah Dikembalikan' : 'Belum Dikembalikan' }}</span>
                 </div>
                 <div class="flex justify-between">
                     <span class="text-gray-600">Jumlah Alat:</span>
@@ -109,7 +124,7 @@
                 </div>
                 <div class="flex justify-between">
                     <span class="text-gray-600">Harga per Item:</span>
-                    <span class="font-medium">Rp {{ number_format($bookingSewaAlat->harga_per_item, 0, ',', '.') }}/jam</span>
+                    <span class="font-medium">Rp {{ number_format($bookingSewaAlat->harga_per_item, 0, ',', '.') }}</span>
                 </div>
                 <div class="flex justify-between text-lg font-semibold">
                     <span>Total Harga:</span>
@@ -143,12 +158,7 @@
                         <span class="text-gray-600">Nomor Tujuan:</span>
                         <span class="font-medium">{{ $bookingSewaAlat->nomor_tujuan }}</span>
                     </div>
-                    @if($bookingSewaAlat->tanggal_bayar)
-                        <div class="flex justify-between">
-                            <span class="text-gray-600">Tanggal Bayar:</span>
-                            <span class="font-medium">{{ $bookingSewaAlat->tanggal_bayar->format('d F Y H:i') }}</span>
-                        </div>
-                    @endif
+
                 </div>
 
                 <!-- Bukti Pembayaran -->
@@ -219,22 +229,22 @@
         </div>
     @endif
 
-    @if($bookingSewaAlat->status_pembayaran === 'lunas' && $bookingSewaAlat->status === 'menunggu_konfirmasi')
+    @if($bookingSewaAlat->status_pembayaran === 'lunas' && $bookingSewaAlat->status === 'approved' && !$bookingSewaAlat->alat_dikembalikan)
         <div class="mt-6 bg-white rounded-lg shadow-md p-6">
-            <h2 class="text-xl font-semibold text-gray-900 mb-4">Konfirmasi Booking</h2>
+            <h2 class="text-xl font-semibold text-gray-900 mb-4">Pengembalian Alat</h2>
             
-            <form action="{{ route('admin.booking-sewa-alat.confirm', $bookingSewaAlat) }}" method="POST" class="space-y-4">
+            <form action="{{ route('admin.booking-sewa-alat.kembalikan-alat', $bookingSewaAlat) }}" method="POST" class="space-y-4">
                 @csrf
                 @method('PATCH')
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Catatan Admin</label>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Catatan Pengembalian</label>
                     <textarea name="catatan_admin" rows="3" 
-                              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                              placeholder="Catatan untuk konfirmasi (opsional)">{{ $bookingSewaAlat->catatan_admin }}</textarea>
+                              class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+                              placeholder="Catatan untuk pengembalian (opsional)">{{ $bookingSewaAlat->catatan_admin }}</textarea>
                 </div>
                 <button type="submit" 
-                        class="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                    Konfirmasi Booking
+                        class="w-full bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500">
+                    Konfirmasi Pengembalian Alat
                 </button>
             </form>
         </div>
