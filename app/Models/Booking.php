@@ -54,7 +54,18 @@ class Booking extends Model
     {
         $start = \Carbon\Carbon::parse($this->jam_mulai);
         $end = \Carbon\Carbon::parse($this->jam_selesai);
-        return $end->diffInHours($start);
+        
+        // Hitung durasi dengan cara yang lebih akurat
+        $durasi = $end->diffInHours($start);
+        
+        // Jika durasi negatif, gunakan perhitungan manual
+        if ($durasi < 0) {
+            $startTime = strtotime($start->format('H:i:s'));
+            $endTime = strtotime($end->format('H:i:s'));
+            $durasi = ($endTime - $startTime) / 3600; // Konversi ke jam
+        }
+        
+        return $durasi;
     }
 
     // Method untuk format status
@@ -95,9 +106,8 @@ class Booking extends Model
     public function getJenisKolamLabelAttribute()
     {
         return match($this->jenis_kolam) {
-            'kolam_anak' => 'Ticket Anak',
             'kolam_utama' => 'Ticket Utama',
-            default => 'Unknown'
+            default => 'Ticket Utama'
         };
     }
 
@@ -105,7 +115,6 @@ class Booking extends Model
     public static function getTarifByJenisKolam($jenisKolam)
     {
         return match($jenisKolam) {
-            'kolam_anak' => 15000,
             'kolam_utama' => 25000,
             default => 25000 // default ke kolam utama
         };

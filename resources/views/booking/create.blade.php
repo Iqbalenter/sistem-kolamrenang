@@ -73,30 +73,13 @@
                     <div class="border-b pb-6">
                         <h3 class="text-lg font-semibold text-gray-900 mb-4">Detail Booking</h3>
                         
-                        <!-- Pilihan Harga Ticket -->
+                        <!-- Informasi Harga Ticket -->
                         <div class="mb-4">
-                            <label class="block text-sm font-medium text-gray-700 mb-3">Pilih Harga Ticket</label>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <label class="block text-sm font-medium text-gray-700 mb-3">Harga Ticket</label>
+                            <div class="grid grid-cols-1 gap-4">
                                 <div class="relative">
-                                    <input type="radio" name="jenis_kolam" id="kolam_anak" value="kolam_anak" 
-                                        {{ old('jenis_kolam') == 'kolam_anak' ? 'checked' : '' }}
-                                        class="sr-only peer" required>
-                                    <label for="kolam_anak" class="block p-4 border border-gray-200 rounded-lg cursor-pointer hover:bg-green-50 peer-checked:bg-green-50 peer-checked:border-green-500">
-                                        <div class="flex items-center">
-                                            <div class="text-2xl mr-3">🧒</div>
-                                            <div>
-                                                <h4 class="font-semibold text-gray-900">Ticket Anak</h4>
-                                                <p class="text-sm text-gray-600">Rp 15.000/jam</p>
-                                            </div>
-                                        </div>
-                                    </label>
-                                </div>
-                                
-                                <div class="relative">
-                                    <input type="radio" name="jenis_kolam" id="kolam_utama" value="kolam_utama" 
-                                        {{ old('jenis_kolam') == 'kolam_utama' || !old('jenis_kolam') ? 'checked' : '' }}
-                                        class="sr-only peer" required>
-                                    <label for="kolam_utama" class="block p-4 border border-gray-200 rounded-lg cursor-pointer hover:bg-blue-50 peer-checked:bg-blue-50 peer-checked:border-blue-500">
+                                    <input type="hidden" name="jenis_kolam" value="kolam_utama">
+                                    <div class="block p-4 border border-blue-200 rounded-lg bg-blue-50 border-blue-500">
                                         <div class="flex items-center">
                                             <div class="text-2xl mr-3">🏊‍♂️</div>
                                             <div>
@@ -104,7 +87,7 @@
                                                 <p class="text-sm text-gray-600">Rp 25.000/jam</p>
                                             </div>
                                         </div>
-                                    </label>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -151,7 +134,6 @@
                     <div class="bg-blue-50 p-4 rounded-lg">
                         <h4 class="font-semibold text-blue-900 mb-2">Informasi Harga & Pembayaran</h4>
                         <div id="price-info" class="text-blue-800">
-                            <p>• Ticket Anak: <span class="font-semibold">Rp 15.000 per jam</span></p>
                             <p>• Ticket Utama: <span class="font-semibold">Rp 25.000 per jam</span></p>
                             <p>• Total harga akan dihitung otomatis berdasarkan harga ticket dan durasi booking</p>
                             <p>• Pembayaran dilakukan setelah booking disetujui admin</p>
@@ -178,19 +160,14 @@
     </div>
 
     <script>
-        // Auto calculate total price based on pool type
+        // Auto calculate total price
         document.addEventListener('DOMContentLoaded', function() {
             const jamMulai = document.getElementById('jam_mulai');
             const jamSelesai = document.getElementById('jam_selesai');
-            const kolamAnak = document.getElementById('kolam_anak');
-            const kolamUtama = document.getElementById('kolam_utama');
             const calculatedPriceDiv = document.getElementById('calculated-price');
             const totalAmountSpan = document.getElementById('total-amount');
             
-            const tarif = {
-                'kolam_anak': 15000,
-                'kolam_utama': 25000
-            };
+            const tarifPerJam = 25000; // Ticket utama
             
             function calculatePrice() {
                 if (jamMulai.value && jamSelesai.value) {
@@ -199,16 +176,13 @@
                     const diffHours = (end - start) / (1000 * 60 * 60);
                     
                     if (diffHours > 0) {
-                        // Get selected pool type
-                        const selectedPool = kolamAnak.checked ? 'kolam_anak' : 'kolam_utama';
-                        const tarifPerJam = tarif[selectedPool];
                         const totalPrice = diffHours * tarifPerJam;
                         
                         // Show calculated price
                         totalAmountSpan.textContent = 'Rp ' + totalPrice.toLocaleString('id-ID');
                         calculatedPriceDiv.classList.remove('hidden');
                         
-                        console.log('Jenis Kolam: ' + selectedPool + ', Durasi: ' + diffHours + ' jam, Total: Rp ' + totalPrice.toLocaleString('id-ID'));
+                        console.log('Jenis Kolam: kolam_utama, Durasi: ' + diffHours + ' jam, Total: Rp ' + totalPrice.toLocaleString('id-ID'));
                     } else {
                         calculatedPriceDiv.classList.add('hidden');
                     }
@@ -220,8 +194,6 @@
             // Add event listeners
             jamMulai.addEventListener('change', calculatePrice);
             jamSelesai.addEventListener('change', calculatePrice);
-            kolamAnak.addEventListener('change', calculatePrice);
-            kolamUtama.addEventListener('change', calculatePrice);
         });
     </script>
 </body>

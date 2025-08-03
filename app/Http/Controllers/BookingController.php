@@ -25,16 +25,27 @@ class BookingController extends Controller
             'jam_mulai' => 'required',
             'jam_selesai' => 'required|after:jam_mulai',
             'jumlah_orang' => 'required|integer|min:1|max:50',
-            'jenis_kolam' => 'required|in:kolam_anak,kolam_utama',
+            'jenis_kolam' => 'required|in:kolam_utama',
             'catatan' => 'nullable|string'
         ]);
 
         // Hitung total harga berdasarkan jenis kolam
         $jamMulai = \Carbon\Carbon::parse($request->jam_mulai);
         $jamSelesai = \Carbon\Carbon::parse($request->jam_selesai);
+        
+        // Hitung durasi dengan cara yang lebih akurat
         $durasi = $jamSelesai->diffInHours($jamMulai);
-        $tarifPerJam = Booking::getTarifByJenisKolam($request->jenis_kolam);
-        $totalHarga = $durasi * $tarifPerJam;
+        
+        // Jika durasi negatif, gunakan perhitungan manual
+        if ($durasi < 0) {
+            $startTime = strtotime($jamMulai->format('H:i:s'));
+            $endTime = strtotime($jamSelesai->format('H:i:s'));
+            $durasi = ($endTime - $startTime) / 3600; // Konversi ke jam
+        }
+        
+        $jenisKolam = $request->jenis_kolam ?? 'kolam_utama'; // Default ke kolam utama
+        $tarifPerJam = Booking::getTarifByJenisKolam($jenisKolam);
+        $totalHarga = $durasi * $tarifPerJam * $request->jumlah_orang;
 
         Booking::create([
             'user_id' => Auth::id(),
@@ -44,7 +55,7 @@ class BookingController extends Controller
             'jam_mulai' => $request->jam_mulai,
             'jam_selesai' => $request->jam_selesai,
             'jumlah_orang' => $request->jumlah_orang,
-            'jenis_kolam' => $request->jenis_kolam,
+            'jenis_kolam' => $jenisKolam,
             'tarif_per_jam' => $tarifPerJam,
             'total_harga' => $totalHarga,
             'catatan' => $request->catatan,

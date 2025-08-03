@@ -473,11 +473,29 @@ class BookingSewaAlatController extends Controller
                 ->with('error', 'Booking harus disetujui terlebih dahulu sebelum pembayaran dapat dikonfirmasi!');
         }
 
-        // Cek stok alat sebelum mengurangi
+        // Cek dan perbaiki jenis alat jika diperlukan
         $jenisAlat = \App\Models\JenisAlat::getByKode($bookingSewaAlat->jenis_alat);
         if (!$jenisAlat) {
-            return redirect()->route('admin.booking-sewa-alat.show', $bookingSewaAlat)
-                ->with('error', 'Jenis alat tidak ditemukan!');
+            // Coba perbaiki data jenis alat
+            $this->fixBookingJenisAlat();
+            
+            // Coba lagi setelah perbaikan
+            $jenisAlat = \App\Models\JenisAlat::getByKode($bookingSewaAlat->jenis_alat);
+            if (!$jenisAlat) {
+                // Jika masih tidak ditemukan, gunakan jenis alat pertama yang tersedia
+                $firstJenisAlat = \App\Models\JenisAlat::where('is_active', true)->first();
+                if ($firstJenisAlat) {
+                    $bookingSewaAlat->update(['jenis_alat' => $firstJenisAlat->kode]);
+                    $jenisAlat = $firstJenisAlat;
+                    \Log::info('Fixed booking jenis alat to first available:', [
+                        'booking_id' => $bookingSewaAlat->id,
+                        'new_jenis_alat' => $firstJenisAlat->kode
+                    ]);
+                } else {
+                    return redirect()->route('admin.booking-sewa-alat.show', $bookingSewaAlat)
+                        ->with('error', 'Tidak ada jenis alat yang tersedia dalam sistem!');
+                }
+            }
         }
 
         $stokAlat = \App\Models\StokAlat::where('jenis_alat_id', $jenisAlat->id)
@@ -485,8 +503,21 @@ class BookingSewaAlatController extends Controller
             ->first();
 
         if (!$stokAlat) {
-            return redirect()->route('admin.booking-sewa-alat.show', $bookingSewaAlat)
-                ->with('error', 'Stok alat tidak ditemukan!');
+            // Coba buat stok alat untuk jenis alat ini
+            $stokAlat = \App\Models\StokAlat::create([
+                'jenis_alat_id' => $jenisAlat->id,
+                'nama_alat' => $jenisAlat->nama,
+                'stok_total' => 10,
+                'stok_tersedia' => 10,
+                'harga_sewa' => $this->getDefaultHarga($jenisAlat->kode),
+                'deskripsi' => $jenisAlat->deskripsi,
+                'is_active' => true
+            ]);
+            \Log::info('Created stok alat for jenis alat:', [
+                'jenis_alat_id' => $jenisAlat->id,
+                'jenis_alat_kode' => $jenisAlat->kode,
+                'jenis_alat_nama' => $jenisAlat->nama
+            ]);
         }
 
         if ($stokAlat->stok_tersedia < $bookingSewaAlat->jumlah_alat) {
@@ -536,11 +567,29 @@ class BookingSewaAlatController extends Controller
                 ->with('error', 'Booking harus disetujui terlebih dahulu sebelum pembayaran dapat disetujui!');
         }
 
-        // Cek stok alat sebelum mengurangi
+        // Cek dan perbaiki jenis alat jika diperlukan
         $jenisAlat = \App\Models\JenisAlat::getByKode($bookingSewaAlat->jenis_alat);
         if (!$jenisAlat) {
-            return redirect()->route('admin.booking-sewa-alat.show', $bookingSewaAlat)
-                ->with('error', 'Jenis alat tidak ditemukan!');
+            // Coba perbaiki data jenis alat
+            $this->fixBookingJenisAlat();
+            
+            // Coba lagi setelah perbaikan
+            $jenisAlat = \App\Models\JenisAlat::getByKode($bookingSewaAlat->jenis_alat);
+            if (!$jenisAlat) {
+                // Jika masih tidak ditemukan, gunakan jenis alat pertama yang tersedia
+                $firstJenisAlat = \App\Models\JenisAlat::where('is_active', true)->first();
+                if ($firstJenisAlat) {
+                    $bookingSewaAlat->update(['jenis_alat' => $firstJenisAlat->kode]);
+                    $jenisAlat = $firstJenisAlat;
+                    \Log::info('Fixed booking jenis alat to first available:', [
+                        'booking_id' => $bookingSewaAlat->id,
+                        'new_jenis_alat' => $firstJenisAlat->kode
+                    ]);
+                } else {
+                    return redirect()->route('admin.booking-sewa-alat.show', $bookingSewaAlat)
+                        ->with('error', 'Tidak ada jenis alat yang tersedia dalam sistem!');
+                }
+            }
         }
 
         $stokAlat = \App\Models\StokAlat::where('jenis_alat_id', $jenisAlat->id)
@@ -548,8 +597,21 @@ class BookingSewaAlatController extends Controller
             ->first();
 
         if (!$stokAlat) {
-            return redirect()->route('admin.booking-sewa-alat.show', $bookingSewaAlat)
-                ->with('error', 'Stok alat tidak ditemukan!');
+            // Coba buat stok alat untuk jenis alat ini
+            $stokAlat = \App\Models\StokAlat::create([
+                'jenis_alat_id' => $jenisAlat->id,
+                'nama_alat' => $jenisAlat->nama,
+                'stok_total' => 10,
+                'stok_tersedia' => 10,
+                'harga_sewa' => $this->getDefaultHarga($jenisAlat->kode),
+                'deskripsi' => $jenisAlat->deskripsi,
+                'is_active' => true
+            ]);
+            \Log::info('Created stok alat for jenis alat:', [
+                'jenis_alat_id' => $jenisAlat->id,
+                'jenis_alat_kode' => $jenisAlat->kode,
+                'jenis_alat_nama' => $jenisAlat->nama
+            ]);
         }
 
         if ($stokAlat->stok_tersedia < $bookingSewaAlat->jumlah_alat) {

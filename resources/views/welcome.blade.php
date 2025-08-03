@@ -67,12 +67,31 @@
                         <span>Tentang</span>
                         <div class="absolute bottom-0 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full"></div>
                     </a>
-                    <a href="{{ route('login') }}" class="px-4 py-2 text-primary hover:bg-primary hover:text-white transition-all duration-300 rounded-lg border border-primary">
-                        Masuk
-                    </a>
-                    <a href="{{ route('register') }}" class="px-4 py-2 bg-gradient-to-r from-primary to-accent text-white rounded-lg hover:shadow-lg hover:scale-105 transition-all duration-300">
-                        Daftar
-                    </a>
+                    
+                    @guest
+                        <a href="{{ route('login') }}" class="px-4 py-2 text-primary hover:bg-primary hover:text-white transition-all duration-300 rounded-lg border border-primary">
+                            Masuk
+                        </a>
+                        <a href="{{ route('register') }}" class="px-4 py-2 bg-gradient-to-r from-primary to-accent text-white rounded-lg hover:shadow-lg hover:scale-105 transition-all duration-300">
+                            Daftar
+                        </a>
+                    @else
+                        @if(Auth::user()->role === 'admin')
+                            <a href="{{ route('admin.dashboard') }}" class="px-4 py-2 bg-gradient-to-r from-primary to-accent text-white rounded-lg hover:shadow-lg hover:scale-105 transition-all duration-300">
+                                Dashboard Admin
+                            </a>
+                        @else
+                            <a href="{{ route('user.dashboard') }}" class="px-4 py-2 bg-gradient-to-r from-primary to-accent text-white rounded-lg hover:shadow-lg hover:scale-105 transition-all duration-300">
+                                Dashboard User
+                            </a>
+                        @endif
+                        <form method="POST" action="{{ route('logout') }}" class="inline">
+                            @csrf
+                            <button type="submit" class="px-4 py-2 text-primary hover:bg-primary hover:text-white transition-all duration-300 rounded-lg border border-primary">
+                                Logout
+                            </button>
+                        </form>
+                    @endguest
                 </div>
                 
                 <!-- Mobile Menu Button -->
@@ -88,8 +107,23 @@
                     <a href="#pools" class="block px-4 py-2 text-gray-700 hover:text-primary hover:bg-gray-50 rounded-lg transition-colors">Jenis Kolam</a>
                     <a href="#fasilitas" class="block px-4 py-2 text-gray-700 hover:text-primary hover:bg-gray-50 rounded-lg transition-colors">Fasilitas</a>
                     <a href="#tentang" class="block px-4 py-2 text-gray-700 hover:text-primary hover:bg-gray-50 rounded-lg transition-colors">Tentang</a>
-                    <a href="{{ route('login') }}" class="block px-4 py-2 text-primary hover:bg-primary hover:text-white rounded-lg transition-colors border border-primary">Masuk</a>
-                    <a href="{{ route('register') }}" class="block px-4 py-2 bg-gradient-to-r from-primary to-accent text-white rounded-lg hover:shadow-lg transition-all">Daftar</a>
+                    
+                    @guest
+                        <a href="{{ route('login') }}" class="block px-4 py-2 text-primary hover:bg-primary hover:text-white rounded-lg transition-colors border border-primary">Masuk</a>
+                        <a href="{{ route('register') }}" class="block px-4 py-2 bg-gradient-to-r from-primary to-accent text-white rounded-lg hover:shadow-lg transition-all">Daftar</a>
+                    @else
+                        @if(Auth::user()->role === 'admin')
+                            <a href="{{ route('admin.dashboard') }}" class="block px-4 py-2 bg-gradient-to-r from-primary to-accent text-white rounded-lg hover:shadow-lg transition-all">Dashboard Admin</a>
+                        @else
+                            <a href="{{ route('user.dashboard') }}" class="block px-4 py-2 bg-gradient-to-r from-primary to-accent text-white rounded-lg hover:shadow-lg transition-all">Dashboard User</a>
+                        @endif
+                        <form method="POST" action="{{ route('logout') }}" class="block">
+                            @csrf
+                            <button type="submit" class="w-full text-left px-4 py-2 text-primary hover:bg-primary hover:text-white rounded-lg transition-colors border border-primary">
+                                Logout
+                            </button>
+                        </form>
+                    @endguest
                 </div>
             </div>
         </div>
@@ -117,10 +151,24 @@
                 Booking kolam renang premium dengan fasilitas lengkap dan air jernih. Ciptakan momen menyenangkan bersama keluarga!
             </p>
             <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                <a href="{{ route('login') }}" class="inline-flex items-center px-8 py-4 bg-gradient-to-r from-accent to-primary text-white font-semibold rounded-full hover:shadow-2xl hover:scale-105 transition-all duration-300 text-lg">
-                    <i class="fas fa-swimming-pool mr-3"></i>
-                    PESAN SEKARANG!
-                </a>
+                @guest
+                    <a href="{{ route('login') }}" class="inline-flex items-center px-8 py-4 bg-gradient-to-r from-accent to-primary text-white font-semibold rounded-full hover:shadow-2xl hover:scale-105 transition-all duration-300 text-lg">
+                        <i class="fas fa-swimming-pool mr-3"></i>
+                        PESAN SEKARANG!
+                    </a>
+                @else
+                    @if(Auth::user()->role === 'admin')
+                        <a href="{{ route('admin.dashboard') }}" class="inline-flex items-center px-8 py-4 bg-gradient-to-r from-accent to-primary text-white font-semibold rounded-full hover:shadow-2xl hover:scale-105 transition-all duration-300 text-lg">
+                            <i class="fas fa-tachometer-alt mr-3"></i>
+                            DASHBOARD ADMIN
+                        </a>
+                    @else
+                        <a href="{{ route('user.booking.create') }}" class="inline-flex items-center px-8 py-4 bg-gradient-to-r from-accent to-primary text-white font-semibold rounded-full hover:shadow-2xl hover:scale-105 transition-all duration-300 text-lg">
+                            <i class="fas fa-swimming-pool mr-3"></i>
+                            PESAN SEKARANG!
+                        </a>
+                    @endif
+                @endguest
                 <a href="#pools" class="inline-flex items-center px-8 py-4 bg-white/20 backdrop-blur-sm text-white font-semibold rounded-full hover:bg-white/30 transition-all duration-300 text-lg">
                     <i class="fas fa-info-circle mr-3"></i>
                     PELAJARI LEBIH LANJUT
@@ -208,9 +256,21 @@
                         <p class="text-gray-600 mb-4">Kolam renang standar untuk orang dewasa dengan kedalaman 1.5-2m. Ideal untuk berenang lap dan olahraga air.</p>
                         <div class="flex items-center justify-between">
                             <span class="text-3xl font-bold text-primary">Rp 25.000<span class="text-sm text-gray-500">/jam</span></span>
-                            <a href="{{ route('login') }}" class="px-6 py-2 bg-gradient-to-r from-primary to-accent text-white rounded-lg hover:shadow-lg hover:scale-105 transition-all duration-300">
-                                Pesan
-                            </a>
+                            @guest
+                                <a href="{{ route('login') }}" class="px-6 py-2 bg-gradient-to-r from-primary to-accent text-white rounded-lg hover:shadow-lg hover:scale-105 transition-all duration-300">
+                                    Pesan
+                                </a>
+                            @else
+                                @if(Auth::user()->role === 'admin')
+                                    <a href="{{ route('admin.dashboard') }}" class="px-6 py-2 bg-gradient-to-r from-primary to-accent text-white rounded-lg hover:shadow-lg hover:scale-105 transition-all duration-300">
+                                        Dashboard
+                                    </a>
+                                @else
+                                    <a href="{{ route('user.booking.create') }}" class="px-6 py-2 bg-gradient-to-r from-primary to-accent text-white rounded-lg hover:shadow-lg hover:scale-105 transition-all duration-300">
+                                        Pesan
+                                    </a>
+                                @endif
+                            @endguest
                         </div>
                     </div>
                 </div>
@@ -228,9 +288,21 @@
                         <p class="text-gray-600 mb-4">Kolam khusus anak-anak dengan kedalaman 0.5-1m. Dilengkapi dengan permainan air yang menyenangkan.</p>
                         <div class="flex items-center justify-between">
                             <span class="text-3xl font-bold text-primary">Rp 15.000<span class="text-sm text-gray-500">/jam</span></span>
-                            <a href="{{ route('login') }}" class="px-6 py-2 bg-gradient-to-r from-primary to-accent text-white rounded-lg hover:shadow-lg hover:scale-105 transition-all duration-300">
-                                Pesan
-                            </a>
+                            @guest
+                                <a href="{{ route('login') }}" class="px-6 py-2 bg-gradient-to-r from-primary to-accent text-white rounded-lg hover:shadow-lg hover:scale-105 transition-all duration-300">
+                                    Pesan
+                                </a>
+                            @else
+                                @if(Auth::user()->role === 'admin')
+                                    <a href="{{ route('admin.dashboard') }}" class="px-6 py-2 bg-gradient-to-r from-primary to-accent text-white rounded-lg hover:shadow-lg hover:scale-105 transition-all duration-300">
+                                        Dashboard
+                                    </a>
+                                @else
+                                    <a href="{{ route('user.booking.create') }}" class="px-6 py-2 bg-gradient-to-r from-primary to-accent text-white rounded-lg hover:shadow-lg hover:scale-105 transition-all duration-300">
+                                        Pesan
+                                    </a>
+                                @endif
+                            @endguest
                         </div>
                     </div>
                 </div>
@@ -403,14 +475,35 @@
                     Bergabunglah dengan ribuan pelanggan yang telah merasakan pengalaman berenang terbaik bersama kami
                 </p>
                 <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                    <a href="{{ route('register') }}" class="inline-flex items-center px-8 py-4 bg-white text-dark font-semibold rounded-lg hover:bg-gray-100 hover:shadow-lg transition-all duration-300">
-                        <i class="fas fa-user-plus mr-3"></i>
-                        Daftar Sekarang
-                    </a>
-                    <a href="{{ route('login') }}" class="inline-flex items-center px-8 py-4 bg-transparent border-2 border-white text-white font-semibold rounded-lg hover:bg-white hover:text-dark transition-all duration-300">
-                        <i class="fas fa-swimming-pool mr-3"></i>
-                        Mulai Booking
-                    </a>
+                    @guest
+                        <a href="{{ route('register') }}" class="inline-flex items-center px-8 py-4 bg-white text-dark font-semibold rounded-lg hover:bg-gray-100 hover:shadow-lg transition-all duration-300">
+                            <i class="fas fa-user-plus mr-3"></i>
+                            Daftar Sekarang
+                        </a>
+                        <a href="{{ route('login') }}" class="inline-flex items-center px-8 py-4 bg-transparent border-2 border-white text-white font-semibold rounded-lg hover:bg-white hover:text-dark transition-all duration-300">
+                            <i class="fas fa-swimming-pool mr-3"></i>
+                            Mulai Booking
+                        </a>
+                    @else
+                        @if(Auth::user()->role === 'admin')
+                            <a href="{{ route('admin.dashboard') }}" class="inline-flex items-center px-8 py-4 bg-white text-dark font-semibold rounded-lg hover:bg-gray-100 hover:shadow-lg transition-all duration-300">
+                                <i class="fas fa-tachometer-alt mr-3"></i>
+                                Dashboard Admin
+                            </a>
+                        @else
+                            <a href="{{ route('user.booking.create') }}" class="inline-flex items-center px-8 py-4 bg-white text-dark font-semibold rounded-lg hover:bg-gray-100 hover:shadow-lg transition-all duration-300">
+                                <i class="fas fa-swimming-pool mr-3"></i>
+                                Mulai Booking
+                            </a>
+                        @endif
+                        <a href="{{ route('logout') }}" class="inline-flex items-center px-8 py-4 bg-transparent border-2 border-white text-white font-semibold rounded-lg hover:bg-white hover:text-dark transition-all duration-300" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                            <i class="fas fa-sign-out-alt mr-3"></i>
+                            Logout
+                        </a>
+                        <form id="logout-form" action="{{ route('logout') }}" method="POST" class="hidden">
+                            @csrf
+                        </form>
+                    @endguest
                 </div>
             </div>
         </div>
@@ -492,9 +585,21 @@
     </footer>
 
     <!-- Floating Action Button -->
-    <a href="{{ route('login') }}" class="fixed bottom-6 right-6 z-50 w-14 h-14 bg-gradient-to-br from-primary to-accent rounded-full flex items-center justify-center text-white shadow-lg hover:shadow-xl hover:scale-110 transition-all duration-300" title="Booking Sekarang">
-        <i class="fas fa-swimming-pool text-xl"></i>
-    </a>
+    @guest
+        <a href="{{ route('login') }}" class="fixed bottom-6 right-6 z-50 w-14 h-14 bg-gradient-to-br from-primary to-accent rounded-full flex items-center justify-center text-white shadow-lg hover:shadow-xl hover:scale-110 transition-all duration-300" title="Login Sekarang">
+            <i class="fas fa-sign-in-alt text-xl"></i>
+        </a>
+    @else
+        @if(Auth::user()->role === 'admin')
+            <a href="{{ route('admin.dashboard') }}" class="fixed bottom-6 right-6 z-50 w-14 h-14 bg-gradient-to-br from-primary to-accent rounded-full flex items-center justify-center text-white shadow-lg hover:shadow-xl hover:scale-110 transition-all duration-300" title="Dashboard Admin">
+                <i class="fas fa-tachometer-alt text-xl"></i>
+            </a>
+        @else
+            <a href="{{ route('user.booking.create') }}" class="fixed bottom-6 right-6 z-50 w-14 h-14 bg-gradient-to-br from-primary to-accent rounded-full flex items-center justify-center text-white shadow-lg hover:shadow-xl hover:scale-110 transition-all duration-300" title="Booking Sekarang">
+                <i class="fas fa-swimming-pool text-xl"></i>
+            </a>
+        @endif
+    @endguest
 
     <!-- Scripts -->
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
