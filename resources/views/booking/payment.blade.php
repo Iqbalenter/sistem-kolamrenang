@@ -277,12 +277,8 @@
                                 <dd class="font-medium">{{ $booking->tanggal_booking->format('d M Y') }}</dd>
                             </div>
                             <div class="flex justify-between">
-                                <dt class="text-gray-500">Waktu:</dt>
-                                <dd class="font-medium">{{ date('H:i', strtotime($booking->jam_mulai)) }} - {{ date('H:i', strtotime($booking->jam_selesai)) }}</dd>
-                            </div>
-                            <div class="flex justify-between">
-                                <dt class="text-gray-500">Durasi:</dt>
-                                <dd class="font-medium">{{ $booking->durasi }} jam</dd>
+                                                            <dt class="text-gray-500">Waktu Akses:</dt>
+                            <dd class="font-medium">06:00 - 18:00 (Seharian Penuh)</dd>
                             </div>
                             <div class="flex justify-between">
                                 <dt class="text-gray-500">Jumlah Orang:</dt>
@@ -300,12 +296,12 @@
                                 <span>{{ $booking->jenis_kolam_label ?? 'Kolam Utama' }}</span>
                             </div>
                             <div class="flex justify-between">
-                                <span>Tarif per jam:</span>
-                                <span>Rp {{ number_format($booking->tarif_per_jam ?? 25000, 0, ',', '.') }}</span>
+                                <span>Tarif harian:</span>
+                                <span>Rp {{ number_format($booking->tarif_harian ?? 50000, 0, ',', '.') }}</span>
                             </div>
                             <div class="flex justify-between">
-                                <span>Durasi:</span>
-                                <span>{{ $booking->durasi }} jam</span>
+                                <span>Akses:</span>
+                                <span>Seharian Penuh</span>
                             </div>
                             <hr class="border-white/20 my-3">
                             <div class="flex justify-between text-lg font-bold">

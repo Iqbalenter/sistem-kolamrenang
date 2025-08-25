@@ -1,10 +1,14 @@
-@extends('admin.layouts.app')
-
-@section('title', 'Kelola Stok Alat')
-@section('page-title', 'Kelola Stok Alat')
-@section('page-description', 'Kelola stok alat renang yang tersedia')
-
-@section('content')
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kelola Stok Alat</title>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+</head>
+<body class="bg-gray-50">
+    @include('components.admin-navbar')
+    
     <div class="min-h-screen py-12 px-4">
         <div class="max-w-6xl mx-auto">
             <!-- Header -->
@@ -140,40 +144,40 @@
     </div>
 
     <!-- Modal Adjust Stok -->
-    <div id="adjustModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
-        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md glass-card">
+    <div id="adjustModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden">
+        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
             <div class="mt-3 text-center">
-                <h3 class="text-lg leading-6 font-medium text-white" id="modalTitle">Adjust Stok</h3>
+                <h3 class="text-lg leading-6 font-medium text-gray-900" id="modalTitle">Adjust Stok</h3>
                 <div class="mt-2 px-7 py-3">
-                    <p class="text-sm text-white text-opacity-80" id="modalDescription">
+                    <p class="text-sm text-gray-500" id="modalDescription">
                         Sesuaikan stok alat. Gunakan angka positif untuk menambah, negatif untuk mengurangi.
                     </p>
                     <form id="adjustForm" method="POST">
                         @csrf
                         <div class="mt-4">
-                            <label class="block text-sm font-medium text-white">Stok Saat Ini</label>
+                            <label class="block text-sm font-medium text-gray-700">Stok Saat Ini</label>
                             <input type="text" id="currentStock" readonly 
-                                   class="mt-1 block w-full px-3 py-2 bg-white bg-opacity-20 border border-white border-opacity-30 rounded-md text-white">
+                                   class="mt-1 block w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded-md">
                         </div>
                         <div class="mt-4">
-                            <label for="jumlah_adjust" class="block text-sm font-medium text-white">Jumlah Penyesuaian</label>
+                            <label for="jumlah_adjust" class="block text-sm font-medium text-gray-700">Jumlah Penyesuaian</label>
                             <input type="number" id="jumlah_adjust" name="jumlah_adjust" required 
-                                   class="mt-1 block w-full px-3 py-2 border border-white border-opacity-30 rounded-md focus:outline-none focus:ring-2 focus:ring-white bg-white bg-opacity-20 text-white">
-                            <p class="text-xs text-white text-opacity-70 mt-1">Contoh: +5 untuk menambah, -3 untuk mengurangi</p>
+                                   class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            <p class="text-xs text-gray-500 mt-1">Contoh: +5 untuk menambah, -3 untuk mengurangi</p>
                         </div>
                         <div class="mt-4">
-                            <label for="keterangan" class="block text-sm font-medium text-white">Keterangan</label>
+                            <label for="keterangan" class="block text-sm font-medium text-gray-700">Keterangan</label>
                             <input type="text" id="keterangan" name="keterangan" required 
                                    placeholder="Alasan penyesuaian stok..."
-                                   class="mt-1 block w-full px-3 py-2 border border-white border-opacity-30 rounded-md focus:outline-none focus:ring-2 focus:ring-white bg-white bg-opacity-20 text-white">
+                                   class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
                         </div>
                         <div class="items-center px-4 py-3">
                             <button type="submit" 
-                                    class="px-4 py-2 bg-blue-500 text-white text-base font-medium rounded-md w-full shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300">
+                                    class="px-4 py-2 bg-indigo-500 text-white text-base font-medium rounded-md w-full shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-300">
                                 Simpan Penyesuaian
                             </button>
                             <button type="button" onclick="closeAdjustModal()"
-                                    class="mt-3 px-4 py-2 bg-gray-500 text-white text-base font-medium rounded-md w-full shadow-sm hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-300">
+                                    class="mt-3 px-4 py-2 bg-gray-300 text-gray-800 text-base font-medium rounded-md w-full shadow-sm hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-300">
                                 Batal
                             </button>
                         </div>
@@ -197,4 +201,5 @@
             document.getElementById('adjustModal').classList.add('hidden');
         }
     </script>
-@endsection
+</body>
+</html>

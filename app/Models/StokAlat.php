@@ -4,14 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class StokAlat extends Model
 {
     use HasFactory;
 
     protected $fillable = [
-        'jenis_alat_id',
+        'jenis_alat',
         'nama_alat',
         'stok_total',
         'stok_tersedia',
@@ -24,12 +23,6 @@ class StokAlat extends Model
         'harga_sewa' => 'decimal:2',
         'is_active' => 'boolean'
     ];
-
-    // Relationship dengan JenisAlat
-    public function jenisAlat(): BelongsTo
-    {
-        return $this->belongsTo(JenisAlat::class);
-    }
 
     // Method untuk mengurangi stok
     public function kurangiStok($jumlah)
@@ -51,13 +44,20 @@ class StokAlat extends Model
             $this->stok_tersedia = $this->stok_total;
         }
         $this->save();
-        return true;
     }
 
     // Method untuk mendapatkan label jenis alat
     public function getJenisAlatLabelAttribute()
     {
-        return $this->jenisAlat ? $this->jenisAlat->nama : 'Unknown';
+        return match($this->jenis_alat) {
+            'ban_renang' => 'Ban Renang',
+            'kacamata_renang' => 'Kacamata Renang',
+            'papan_renang' => 'Papan Renang',
+            'pelampung' => 'Pelampung',
+            'fins' => 'Fins (Kaki Katak)',
+            'snorkel' => 'Snorkel',
+            default => 'Unknown'
+        };
     }
 
     // Method untuk cek apakah stok tersedia
@@ -69,27 +69,19 @@ class StokAlat extends Model
     // Relationship dengan booking
     public function bookings()
     {
-        // Relasi melalui jenis alat
-        return $this->hasMany(BookingSewaAlat::class, 'jenis_alat', 'kode');
+        return $this->hasMany(BookingSewaAlat::class, 'jenis_alat', 'jenis_alat');
     }
 
     // Static method untuk mendapatkan stok berdasarkan jenis alat
-    public static function getStokByJenis($jenisAlatKode)
+    public static function getStokByJenis($jenisAlat)
     {
-        $jenisAlat = JenisAlat::getByKode($jenisAlatKode);
-        if (!$jenisAlat) {
-            return null;
-        }
-        return self::where('jenis_alat_id', $jenisAlat->id)
-            ->where('is_active', true)
-            ->where('stok_tersedia', '>', 0)
-            ->first();
+        return self::where('jenis_alat', $jenisAlat)->where('is_active', true)->first();
     }
 
     // Static method untuk mendapatkan harga berdasarkan jenis alat
-    public static function getHargaByJenis($jenisAlatKode)
+    public static function getHargaByJenis($jenisAlat)
     {
-        $stok = self::getStokByJenis($jenisAlatKode);
+        $stok = self::getStokByJenis($jenisAlat);
         return $stok ? $stok->harga_sewa : 0;
     }
 }

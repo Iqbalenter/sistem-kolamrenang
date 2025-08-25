@@ -1,10 +1,14 @@
-@extends('admin.layouts.app')
-
-@section('title', 'Tambah Stok Alat')
-@section('page-title', 'Tambah Stok Alat')
-@section('page-description', 'Tambah stok alat renang baru')
-
-@section('content')
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tambah Stok Alat</title>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+</head>
+<body class="bg-gray-50">
+    @include('components.admin-navbar')
+    
     <div class="min-h-screen py-12 px-4">
         <div class="max-w-2xl mx-auto">
             <!-- Header -->
@@ -47,22 +51,32 @@
                     
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <label for="jenis_alat_id" class="block text-sm font-medium text-gray-700 mb-2">
+                            <label for="jenis_alat" class="block text-sm font-medium text-gray-700 mb-2">
                                 Jenis Alat <span class="text-red-500">*</span>
                             </label>
-                            <select id="jenis_alat_id" name="jenis_alat_id" 
+                            <select id="jenis_alat" name="jenis_alat" 
                                     class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
                                     required>
                                 <option value="">Pilih Jenis Alat</option>
-                                @foreach($jenisAlats as $jenisAlat)
-                                    <option value="{{ $jenisAlat->id }}" {{ old('jenis_alat_id') == $jenisAlat->id ? 'selected' : '' }}>
-                                        {{ $jenisAlat->nama }}
-                                    </option>
-                                @endforeach
+                                <option value="ban_renang" {{ old('jenis_alat') == 'ban_renang' ? 'selected' : '' }}>
+                                    Ban Renang
+                                </option>
+                                <option value="kacamata_renang" {{ old('jenis_alat') == 'kacamata_renang' ? 'selected' : '' }}>
+                                    Kacamata Renang
+                                </option>
+                                <option value="papan_renang" {{ old('jenis_alat') == 'papan_renang' ? 'selected' : '' }}>
+                                    Papan Renang
+                                </option>
+                                <option value="pelampung" {{ old('jenis_alat') == 'pelampung' ? 'selected' : '' }}>
+                                    Pelampung
+                                </option>
+                                <option value="fins" {{ old('jenis_alat') == 'fins' ? 'selected' : '' }}>
+                                    Fins (Kaki Katak)
+                                </option>
+                                <option value="snorkel" {{ old('jenis_alat') == 'snorkel' ? 'selected' : '' }}>
+                                    Snorkel
+                                </option>
                             </select>
-                            @error('jenis_alat_id')
-                                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                            @enderror
                         </div>
                         
                         <div>
@@ -128,4 +142,5 @@
             </div>
         </div>
     </div>
-@endsection
+</body>
+</html>

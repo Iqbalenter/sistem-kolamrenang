@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         .pool-background {
-            background-image: url('{{ asset('kolam1.jpg') }}');
+            background-image: url('{{ asset('kolamm.jpg') }}');
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;

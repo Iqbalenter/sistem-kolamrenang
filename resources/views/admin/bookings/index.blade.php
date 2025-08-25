@@ -117,7 +117,7 @@
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <div class="text-sm font-medium text-gray-900">{{ $booking->jenis_kolam_label ?? 'Kolam Utama' }}</div>
                                 <div class="text-sm text-gray-500">{{ $booking->tanggal_booking->format('d M Y') }}</div>
-                                <div class="text-sm text-gray-500">{{ date('H:i', strtotime($booking->jam_mulai)) }} - {{ date('H:i', strtotime($booking->jam_selesai)) }}</div>
+                                <div class="text-sm text-gray-500">06:00 - 18:00 (Seharian Penuh)</div>
                                 <div class="text-sm text-gray-500">{{ $booking->jumlah_orang }} orang</div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
@@ -269,7 +269,7 @@
                         </div>
                         <div>
                             <p class="text-gray-500">Waktu:</p>
-                            <p class="font-medium text-gray-900">{{ date('H:i', strtotime($booking->jam_mulai)) }} - {{ date('H:i', strtotime($booking->jam_selesai)) }}</p>
+                                                            <p class="font-medium text-gray-900">06:00 - 18:00 (Seharian Penuh)</p>
                         </div>
                         <div>
                             <p class="text-gray-500">Total:</p>

@@ -255,7 +255,7 @@
                         <h4 class="text-2xl font-bold text-gray-900 mb-2">Kolam Utama</h4>
                         <p class="text-gray-600 mb-4">Kolam renang standar untuk orang dewasa dengan kedalaman 1.5-2m. Ideal untuk berenang lap dan olahraga air.</p>
                         <div class="flex items-center justify-between">
-                            <span class="text-3xl font-bold text-primary">Rp 25.000<span class="text-sm text-gray-500">/jam</span></span>
+                                                            <span class="text-3xl font-bold text-primary">Rp 50.000<span class="text-sm text-gray-500">/hari</span></span>
                             @guest
                                 <a href="{{ route('login') }}" class="px-6 py-2 bg-gradient-to-r from-primary to-accent text-white rounded-lg hover:shadow-lg hover:scale-105 transition-all duration-300">
                                     Pesan
@@ -287,7 +287,7 @@
                         <h4 class="text-2xl font-bold text-gray-900 mb-2">Kolam Anak-anak</h4>
                         <p class="text-gray-600 mb-4">Kolam khusus anak-anak dengan kedalaman 0.5-1m. Dilengkapi dengan permainan air yang menyenangkan.</p>
                         <div class="flex items-center justify-between">
-                            <span class="text-3xl font-bold text-primary">Rp 15.000<span class="text-sm text-gray-500">/jam</span></span>
+                            <span class="text-3xl font-bold text-primary">Rp 35.000<span class="text-sm text-gray-500">/hari</span></span>
                             @guest
                                 <a href="{{ route('login') }}" class="px-6 py-2 bg-gradient-to-r from-primary to-accent text-white rounded-lg hover:shadow-lg hover:scale-105 transition-all duration-300">
                                     Pesan

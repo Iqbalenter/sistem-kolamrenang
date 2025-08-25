@@ -22,41 +22,24 @@ class BookingController extends Controller
             'nama_pemesan' => 'required|string|max:255',
             'nomor_telepon' => 'required|string|max:15',
             'tanggal_booking' => 'required|date|after:today',
-            'jam_mulai' => 'required',
-            'jam_selesai' => 'required|after:jam_mulai',
             'jumlah_orang' => 'required|integer|min:1|max:50',
             'jenis_kolam' => 'required|in:kolam_utama',
             'catatan' => 'nullable|string'
         ]);
 
-        // Hitung total harga berdasarkan jenis kolam
-        $jamMulai = \Carbon\Carbon::parse($request->jam_mulai);
-        $jamSelesai = \Carbon\Carbon::parse($request->jam_selesai);
-        
-        // Hitung durasi dengan cara yang lebih akurat
-        $durasi = $jamSelesai->diffInHours($jamMulai);
-        
-        // Jika durasi negatif, gunakan perhitungan manual
-        if ($durasi < 0) {
-            $startTime = strtotime($jamMulai->format('H:i:s'));
-            $endTime = strtotime($jamSelesai->format('H:i:s'));
-            $durasi = ($endTime - $startTime) / 3600; // Konversi ke jam
-        }
-        
+        // Hitung total harga berdasarkan jenis kolam (sistem harian)
         $jenisKolam = $request->jenis_kolam ?? 'kolam_utama'; // Default ke kolam utama
-        $tarifPerJam = Booking::getTarifByJenisKolam($jenisKolam);
-        $totalHarga = $durasi * $tarifPerJam * $request->jumlah_orang;
+        $tarifHarian = Booking::getTarifHarianByJenisKolam($jenisKolam);
+        $totalHarga = $tarifHarian * $request->jumlah_orang;
 
         Booking::create([
             'user_id' => Auth::id(),
             'nama_pemesan' => $request->nama_pemesan,
             'nomor_telepon' => $request->nomor_telepon,
             'tanggal_booking' => $request->tanggal_booking,
-            'jam_mulai' => $request->jam_mulai,
-            'jam_selesai' => $request->jam_selesai,
             'jumlah_orang' => $request->jumlah_orang,
             'jenis_kolam' => $jenisKolam,
-            'tarif_per_jam' => $tarifPerJam,
+            'tarif_harian' => $tarifHarian,
             'total_harga' => $totalHarga,
             'catatan' => $request->catatan,
             'status' => 'pending',

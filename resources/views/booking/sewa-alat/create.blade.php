@@ -48,18 +48,36 @@
             <div class="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-6">
                 <h3 class="text-lg font-semibold text-blue-900 mb-3">Informasi Tarif Sewa Alat (Per Hari)</h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                    @foreach($stokAlats as $stokAlat)
-                        <div class="flex justify-between">
-                            <span class="text-blue-700">{{ $stokAlat->jenisAlat->nama }}:</span>
-                            <span class="font-semibold text-blue-900">Rp {{ number_format($stokAlat->harga_sewa, 0, ',', '.') }}/hari</span>
-                        </div>
-                    @endforeach
+                    <div class="flex justify-between">
+                        <span class="text-blue-700">Ban Renang:</span>
+                        <span class="font-semibold text-blue-900">Rp 15.000/hari</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-blue-700">Kacamata Renang:</span>
+                        <span class="font-semibold text-blue-900">Rp 10.000/hari</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-blue-700">Papan Renang:</span>
+                        <span class="font-semibold text-blue-900">Rp 20.000/hari</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-blue-700">Pelampung:</span>
+                        <span class="font-semibold text-blue-900">Rp 15.000/hari</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-blue-700">Fins (Kaki Katak):</span>
+                        <span class="font-semibold text-blue-900">Rp 25.000/hari</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-blue-700">Snorkel:</span>
+                        <span class="font-semibold text-blue-900">Rp 20.000/hari</span>
+                    </div>
                 </div>
             </div>
 
             <!-- Form Booking -->
             <div class="bg-white rounded-lg shadow-md p-6">
-                <form action="{{ route('user.booking.sewa-alat.store') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
+                <form action="{{ route('user.booking.sewa-alat.store') }}" method="POST" class="space-y-6">
                     @csrf
                     
                     <!-- Data Penyewa -->
@@ -109,13 +127,24 @@
                                         class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
                                         required onchange="updateHarga()">
                                     <option value="">Pilih Jenis Alat</option>
-                                    @foreach($stokAlats as $stokAlat)
-                                        <option value="{{ $stokAlat->jenisAlat->kode }}" 
-                                                data-harga="{{ $stokAlat->harga_sewa }}"
-                                                {{ old('jenis_alat') == $stokAlat->jenisAlat->kode ? 'selected' : '' }}>
-                                            {{ $stokAlat->jenisAlat->nama }} (Rp {{ number_format($stokAlat->harga_sewa, 0, ',', '.') }}/hari)
-                                        </option>
-                                    @endforeach
+                                    <option value="ban_renang" {{ old('jenis_alat') == 'ban_renang' ? 'selected' : '' }}>
+                                        Ban Renang (Rp 15.000/hari)
+                                    </option>
+                                    <option value="kacamata_renang" {{ old('jenis_alat') == 'kacamata_renang' ? 'selected' : '' }}>
+                                        Kacamata Renang (Rp 10.000/hari)
+                                    </option>
+                                    <option value="papan_renang" {{ old('jenis_alat') == 'papan_renang' ? 'selected' : '' }}>
+                                        Papan Renang (Rp 20.000/hari)
+                                    </option>
+                                    <option value="pelampung" {{ old('jenis_alat') == 'pelampung' ? 'selected' : '' }}>
+                                        Pelampung (Rp 15.000/hari)
+                                    </option>
+                                    <option value="fins" {{ old('jenis_alat') == 'fins' ? 'selected' : '' }}>
+                                        Fins - Kaki Katak (Rp 25.000/hari)
+                                    </option>
+                                    <option value="snorkel" {{ old('jenis_alat') == 'snorkel' ? 'selected' : '' }}>
+                                        Snorkel (Rp 20.000/hari)
+                                    </option>
                                 </select>
                             </div>
                         </div>
@@ -201,96 +230,35 @@
     </div>
 
     <script>
-        // Error handling untuk JavaScript
-        window.addEventListener('error', function(e) {
-            console.error('JavaScript error:', e.error);
-        });
-
         function updateHarga() {
-            try {
-                const jenisAlat = document.getElementById('jenis_alat');
-                const jumlahAlat = document.getElementById('jumlah_alat');
-                const hargaDisplay = document.getElementById('harga-display');
-                const detailHarga = document.getElementById('detail-harga');
-                
-                if (!jenisAlat || !jumlahAlat || !hargaDisplay || !detailHarga) {
-                    console.error('Element tidak ditemukan:', {
-                        jenisAlat: !!jenisAlat,
-                        jumlahAlat: !!jumlahAlat,
-                        hargaDisplay: !!hargaDisplay,
-                        detailHarga: !!detailHarga
-                    });
-                    return;
-                }
-                
-                const jenisAlatValue = jenisAlat.value;
-                const jumlahAlatValue = parseInt(jumlahAlat.value) || 1;
-                
-                if (jenisAlatValue) {
-                    // Ambil harga dari data-harga attribute
-                    const selectedOption = jenisAlat.options[jenisAlat.selectedIndex];
-                    const hargaPerItem = parseInt(selectedOption.getAttribute('data-harga')) || 0;
-                    
-                    if (hargaPerItem > 0) {
-                        const totalHarga = hargaPerItem * jumlahAlatValue;
-                        hargaDisplay.textContent = 'Rp ' + totalHarga.toLocaleString('id-ID');
-                        detailHarga.textContent = `${jumlahAlatValue} alat × Rp ${hargaPerItem.toLocaleString('id-ID')}/hari`;
-                    } else {
-                        hargaDisplay.textContent = 'Rp 0';
-                        detailHarga.textContent = 'Harga akan dihitung otomatis berdasarkan jenis alat dan jumlah (per hari)';
-                    }
-                } else {
-                    hargaDisplay.textContent = 'Rp 0';
-                    detailHarga.textContent = 'Harga akan dihitung otomatis berdasarkan jenis alat dan jumlah (per hari)';
-                }
-            } catch (error) {
-                console.error('Error in updateHarga:', error);
+            const jenisAlat = document.getElementById('jenis_alat').value;
+            const jumlahAlat = parseInt(document.getElementById('jumlah_alat').value) || 1;
+            
+            const hargaPerItem = {
+                'ban_renang': 15000,
+                'kacamata_renang': 10000,
+                'papan_renang': 20000,
+                'pelampung': 15000,
+                'fins': 25000,
+                'snorkel': 20000
+            };
+            
+            if (jenisAlat && hargaPerItem[jenisAlat]) {
+                const totalHarga = hargaPerItem[jenisAlat] * jumlahAlat;
+                document.getElementById('harga-display').textContent = 
+                    'Rp ' + totalHarga.toLocaleString('id-ID');
+                document.getElementById('detail-harga').textContent = 
+                    `${jumlahAlat} alat × Rp ${hargaPerItem[jenisAlat].toLocaleString('id-ID')}/hari`;
+            } else {
+                document.getElementById('harga-display').textContent = 'Rp 0';
+                document.getElementById('detail-harga').textContent = 
+                    'Harga akan dihitung otomatis berdasarkan jenis alat dan jumlah (per hari)';
             }
         }
 
         // Update harga saat halaman dimuat
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('DOM loaded, updating harga...');
-            try {
-                updateHarga();
-            } catch (error) {
-                console.error('Error on DOMContentLoaded:', error);
-            }
-        });
-
-        // Update harga saat input berubah
-        document.addEventListener('change', function(e) {
-            if (e.target.id === 'jenis_alat' || e.target.id === 'jumlah_alat') {
-                try {
-                    updateHarga();
-                } catch (error) {
-                    console.error('Error on change event:', error);
-                }
-            }
-        });
-
-        // Form validation
-        document.addEventListener('submit', function(e) {
-            const form = e.target;
-            const fileInput = form.querySelector('#foto_jaminan');
-            
-            if (fileInput && fileInput.files.length > 0) {
-                const file = fileInput.files[0];
-                const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg'];
-                const maxSize = 2 * 1024 * 1024; // 2MB
-                
-                if (!allowedTypes.includes(file.type)) {
-                    e.preventDefault();
-                    alert('File harus berupa gambar (JPG, PNG)');
-                    return;
-                }
-                
-                if (file.size > maxSize) {
-                    e.preventDefault();
-                    alert('Ukuran file maksimal 2MB');
-                    return;
-                }
-            }
+            updateHarga();
         });
     </script>
 </body>

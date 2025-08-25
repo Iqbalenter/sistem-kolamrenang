@@ -14,14 +14,14 @@ class PdfController extends Controller
     /**
      * Export PDF untuk detail booking kolam
      */
-    public function exportBookingKolamDetail(Booking $booking)
+    public function bookingKolamDetail(Booking $booking)
     {
-        // Pastikan user hanya bisa export booking miliknya sendiri
-        if ($booking->user_id !== Auth::id()) {
+        $user = Auth::user();
+        
+        // Pastikan user hanya bisa export booking miliknya sendiri (kecuali admin)
+        if ($user->role === 'user' && $booking->user_id !== Auth::id()) {
             abort(403);
         }
-        
-        $user = Auth::user();
         
         $pdf = Pdf::loadView('pdf.booking-kolam-detail', [
             'booking' => $booking,
@@ -34,14 +34,14 @@ class PdfController extends Controller
     /**
      * Export PDF untuk detail booking kelas
      */
-    public function exportBookingKelasDetail(BookingKelas $bookingKelas)
+    public function bookingKelasDetail(BookingKelas $bookingKelas)
     {
-        // Pastikan user hanya bisa export booking miliknya sendiri
-        if ($bookingKelas->user_id !== Auth::id()) {
+        $user = Auth::user();
+        
+        // Pastikan user hanya bisa export booking miliknya sendiri (kecuali admin)
+        if ($user->role === 'user' && $bookingKelas->user_id !== Auth::id()) {
             abort(403);
         }
-        
-        $user = Auth::user();
         
         $pdf = Pdf::loadView('pdf.booking-kelas-detail', [
             'bookingKelas' => $bookingKelas,
@@ -54,14 +54,14 @@ class PdfController extends Controller
     /**
      * Export PDF untuk detail booking sewa alat
      */
-    public function exportBookingSewaAlatDetail(BookingSewaAlat $bookingSewaAlat)
+    public function bookingSewaAlatDetail(BookingSewaAlat $bookingSewaAlat)
     {
-        // Pastikan user hanya bisa export booking miliknya sendiri
-        if ($bookingSewaAlat->user_id !== Auth::id()) {
+        $user = Auth::user();
+        
+        // Pastikan user hanya bisa export booking miliknya sendiri (kecuali admin)
+        if ($user->role === 'user' && $bookingSewaAlat->user_id !== Auth::id()) {
             abort(403);
         }
-        
-        $user = Auth::user();
         
         $pdf = Pdf::loadView('pdf.booking-sewa-alat-detail', [
             'bookingSewaAlat' => $bookingSewaAlat,
@@ -74,10 +74,16 @@ class PdfController extends Controller
     /**
      * Export PDF untuk riwayat booking kolam (semua)
      */
-    public function exportBookingKolam()
+    public function bookingKolam()
     {
         $user = Auth::user();
-        $bookings = Booking::where('user_id', $user->id)->latest()->get();
+        
+        // Admin bisa export semua booking, user hanya miliknya
+        if ($user->role === 'admin') {
+            $bookings = Booking::latest()->get();
+        } else {
+            $bookings = Booking::where('user_id', $user->id)->latest()->get();
+        }
         
         $pdf = Pdf::loadView('pdf.booking-kolam', [
             'bookings' => $bookings,
@@ -90,10 +96,16 @@ class PdfController extends Controller
     /**
      * Export PDF untuk riwayat booking kelas (semua)
      */
-    public function exportBookingKelas()
+    public function bookingKelas()
     {
         $user = Auth::user();
-        $bookings = BookingKelas::where('user_id', $user->id)->latest()->get();
+        
+        // Admin bisa export semua booking, user hanya miliknya
+        if ($user->role === 'admin') {
+            $bookings = BookingKelas::latest()->get();
+        } else {
+            $bookings = BookingKelas::where('user_id', $user->id)->latest()->get();
+        }
         
         $pdf = Pdf::loadView('pdf.booking-kelas', [
             'bookings' => $bookings,
@@ -106,10 +118,16 @@ class PdfController extends Controller
     /**
      * Export PDF untuk riwayat booking sewa alat (semua)
      */
-    public function exportBookingSewaAlat()
+    public function bookingSewaAlat()
     {
         $user = Auth::user();
-        $bookings = BookingSewaAlat::where('user_id', $user->id)->latest()->get();
+        
+        // Admin bisa export semua booking, user hanya miliknya
+        if ($user->role === 'admin') {
+            $bookings = BookingSewaAlat::latest()->get();
+        } else {
+            $bookings = BookingSewaAlat::where('user_id', $user->id)->latest()->get();
+        }
         
         $pdf = Pdf::loadView('pdf.booking-sewa-alat', [
             'bookings' => $bookings,
@@ -122,13 +140,20 @@ class PdfController extends Controller
     /**
      * Export PDF untuk semua jenis booking
      */
-    public function exportAllBookings()
+    public function allBookings()
     {
         $user = Auth::user();
         
-        $bookingsKolam = Booking::where('user_id', $user->id)->latest()->get();
-        $bookingsKelas = BookingKelas::where('user_id', $user->id)->latest()->get();
-        $bookingsSewaAlat = BookingSewaAlat::where('user_id', $user->id)->latest()->get();
+        // Admin bisa export semua booking, user hanya miliknya
+        if ($user->role === 'admin') {
+            $bookingsKolam = Booking::latest()->get();
+            $bookingsKelas = BookingKelas::latest()->get();
+            $bookingsSewaAlat = BookingSewaAlat::latest()->get();
+        } else {
+            $bookingsKolam = Booking::where('user_id', $user->id)->latest()->get();
+            $bookingsKelas = BookingKelas::where('user_id', $user->id)->latest()->get();
+            $bookingsSewaAlat = BookingSewaAlat::where('user_id', $user->id)->latest()->get();
+        }
         
         $pdf = Pdf::loadView('pdf.all-bookings', [
             'bookingsKolam' => $bookingsKolam,

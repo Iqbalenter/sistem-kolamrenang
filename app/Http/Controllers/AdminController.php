@@ -61,7 +61,7 @@ class AdminController extends Controller
             ->where('status', 'approved')
             ->where('tanggal_booking', '>=', Carbon::today())
             ->orderBy('tanggal_booking', 'asc')
-            ->orderBy('jam_mulai', 'asc')
+            ->orderBy('created_at', 'asc') // Sort berdasarkan waktu booking dibuat
             ->take(5)
             ->get();
             

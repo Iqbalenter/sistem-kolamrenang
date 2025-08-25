@@ -83,7 +83,7 @@
                                         <div>
                                             <p class="text-sm text-gray-500">Tanggal & Waktu</p>
                                             <p class="font-medium">{{ $booking->tanggal_booking->format('d M Y') }}</p>
-                                            <p class="text-sm text-gray-600">{{ date('H:i', strtotime($booking->jam_mulai)) }} - {{ date('H:i', strtotime($booking->jam_selesai)) }}</p>
+                                            <p class="text-sm text-gray-600">06:00 - 18:00 (Seharian Penuh)</p>
                                         </div>
                                         
                                         <div>
@@ -95,7 +95,7 @@
                                         <div>
                                             <p class="text-sm text-gray-500">Harga Ticket</p>
                                             <p class="font-medium">{{ $booking->jenis_kolam_label ?? 'Ticket Utama' }}</p>
-                                            <p class="text-sm text-gray-600">Rp {{ number_format($booking->tarif_per_jam ?? 25000, 0, ',', '.') }}/jam</p>
+                                            <p class="text-sm text-gray-600">Rp {{ number_format($booking->tarif_harian ?? 50000, 0, ',', '.') }}/hari</p>
                                         </div>
                                         
                                         <div>

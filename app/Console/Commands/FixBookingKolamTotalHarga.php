@@ -19,7 +19,7 @@ class FixBookingKolamTotalHarga extends Command
      *
      * @var string
      */
-    protected $description = 'Memperbaiki total harga yang bermasalah pada booking kolam renang';
+    protected $description = 'Memperbaiki total harga pada booking kolam renang (sistem harian)';
 
     /**
      * Execute the console command.
@@ -34,8 +34,8 @@ class FixBookingKolamTotalHarga extends Command
                   ->orWhere('total_harga', null)
                   ->orWhere('total_harga', '')
                   ->orWhere('total_harga', '<', 0)
-                  ->orWhere('tarif_per_jam', 0)
-                  ->orWhere('tarif_per_jam', null);
+                  ->orWhere('tarif_harian', 0)
+                  ->orWhere('tarif_harian', null);
         })->get();
 
         $this->info("Total booking yang perlu diperbaiki: {$bookings->count()}");
@@ -50,61 +50,24 @@ class FixBookingKolamTotalHarga extends Command
 
         foreach ($bookings as $booking) {
             $this->info("Memperbaiki booking ID: {$booking->id}");
-            $this->info("  - Jam Mulai: {$booking->jam_mulai}");
-            $this->info("  - Jam Selesai: {$booking->jam_selesai}");
+            $this->info("  - Tanggal: {$booking->tanggal_booking->format('d/m/Y')}");
+            $this->info("  - Jumlah Orang: {$booking->jumlah_orang}");
             
-            // Hitung ulang durasi
-            $jamMulai = \Carbon\Carbon::parse($booking->jam_mulai);
-            $jamSelesai = \Carbon\Carbon::parse($booking->jam_selesai);
+            // Dapatkan tarif harian berdasarkan jenis kolam
+            $tarifHarian = Booking::getTarifHarianByJenisKolam($booking->jenis_kolam);
             
-            $this->info("  - Jam Mulai (parsed): {$jamMulai->format('H:i:s')}");
-            $this->info("  - Jam Selesai (parsed): {$jamSelesai->format('H:i:s')}");
-            
-            // Jika jam_selesai lebih awal dari jam_mulai, tukar posisinya
-            if ($jamSelesai->lt($jamMulai)) {
-                $this->info("  ⚠️  Jam selesai lebih awal dari jam mulai, menukar posisi...");
-                $tempJam = $jamMulai;
-                $jamMulai = $jamSelesai;
-                $jamSelesai = $tempJam;
-                
-                // Update jam_mulai dan jam_selesai di database
-                $booking->update([
-                    'jam_mulai' => $jamMulai->format('H:i:s'),
-                    'jam_selesai' => $jamSelesai->format('H:i:s')
-                ]);
-                
-                $this->info("  - Jam Mulai (setelah tukar): {$jamMulai->format('H:i:s')}");
-                $this->info("  - Jam Selesai (setelah tukar): {$jamSelesai->format('H:i:s')}");
-            }
-            
-            // Hitung durasi dengan cara yang lebih akurat
-            $durasi = $jamSelesai->diffInHours($jamMulai);
-            
-            // Jika durasi masih negatif, gunakan cara alternatif
-            if ($durasi < 0) {
-                $this->info("  ⚠️  Durasi masih negatif, menggunakan perhitungan manual...");
-                $startTime = strtotime($jamMulai->format('H:i:s'));
-                $endTime = strtotime($jamSelesai->format('H:i:s'));
-                $durasi = ($endTime - $startTime) / 3600; // Konversi ke jam
-            }
-            
-            $this->info("  - Durasi: {$durasi} jam");
-            
-            // Dapatkan tarif per jam
-            $tarifPerJam = Booking::getTarifByJenisKolam($booking->jenis_kolam);
-            
-            // Hitung ulang total harga dengan memperhitungkan jumlah orang
-            $totalHarga = $durasi * $tarifPerJam * $booking->jumlah_orang;
+            // Hitung total harga sistem harian: tarif_harian × jumlah_orang
+            $totalHarga = $tarifHarian * $booking->jumlah_orang;
 
-            // Update booking
+            // Update booking dengan sistem harian
             $booking->update([
-                'tarif_per_jam' => $tarifPerJam,
+                'tarif_harian' => $tarifHarian,
                 'total_harga' => $totalHarga
             ]);
 
             $this->info("  ✓ Total harga diperbaiki: Rp " . number_format($totalHarga, 0, ',', '.'));
-            $this->info("    - Durasi: {$durasi} jam");
-            $this->info("    - Tarif per jam: Rp " . number_format($tarifPerJam, 0, ',', '.'));
+            $this->info("    - Sistem: Harian (06:00-18:00)");
+            $this->info("    - Tarif harian: Rp " . number_format($tarifHarian, 0, ',', '.'));
             $this->info("    - Jumlah orang: {$booking->jumlah_orang}");
             $fixedCount++;
         }

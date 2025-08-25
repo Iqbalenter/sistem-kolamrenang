@@ -84,7 +84,8 @@
                                             <div class="text-2xl mr-3">🏊‍♂️</div>
                                             <div>
                                                 <h4 class="font-semibold text-gray-900">Ticket Utama</h4>
-                                                <p class="text-sm text-gray-600">Rp 25.000/jam</p>
+                                                <p class="text-sm text-gray-600">Rp 50.000/hari</p>
+                                                <p class="text-xs text-gray-500">Akses seharian penuh ke kolam renang</p>
                                             </div>
                                         </div>
                                     </div>
@@ -92,34 +93,24 @@
                             </div>
                         </div>
                         
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
                                 <label for="tanggal_booking" class="block text-sm font-medium text-gray-700 mb-2">Tanggal Booking</label>
                                 <input type="date" name="tanggal_booking" id="tanggal_booking" value="{{ old('tanggal_booking') }}" 
                                     min="{{ date('Y-m-d', strtotime('tomorrow')) }}" required
                                     class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                                <small class="text-gray-500">Akses seharian penuh mulai pukul 06:00 - 18:00</small>
                             </div>
                             
                             <div>
-                                <label for="jam_mulai" class="block text-sm font-medium text-gray-700 mb-2">Jam Mulai</label>
-                                <input type="time" name="jam_mulai" id="jam_mulai" value="{{ old('jam_mulai') }}" required
+                                <label for="jumlah_orang" class="block text-sm font-medium text-gray-700 mb-2">Jumlah Orang</label>
+                                <input type="number" name="jumlah_orang" id="jumlah_orang" value="{{ old('jumlah_orang', 1) }}" 
+                                    min="1" max="50" required
                                     class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
-                            </div>
-                            
-                            <div>
-                                <label for="jam_selesai" class="block text-sm font-medium text-gray-700 mb-2">Jam Selesai</label>
-                                <input type="time" name="jam_selesai" id="jam_selesai" value="{{ old('jam_selesai') }}" required
-                                    class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                                <small class="text-gray-500">Maksimal 50 orang per booking</small>
                             </div>
                         </div>
-                        
-                        <div class="mt-4">
-                            <label for="jumlah_orang" class="block text-sm font-medium text-gray-700 mb-2">Jumlah Orang</label>
-                            <input type="number" name="jumlah_orang" id="jumlah_orang" value="{{ old('jumlah_orang', 1) }}" 
-                                min="1" max="50" required
-                                class="w-full md:w-1/3 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
-                            <small class="text-gray-500">Maksimal 50 orang</small>
-                        </div>
+
                     </div>
 
                     <!-- Catatan -->
@@ -134,8 +125,9 @@
                     <div class="bg-blue-50 p-4 rounded-lg">
                         <h4 class="font-semibold text-blue-900 mb-2">Informasi Harga & Pembayaran</h4>
                         <div id="price-info" class="text-blue-800">
-                            <p>• Ticket Utama: <span class="font-semibold">Rp 25.000 per jam</span></p>
-                            <p>• Total harga akan dihitung otomatis berdasarkan harga ticket dan durasi booking</p>
+                            <p>• Ticket Utama: <span class="font-semibold">Rp 50.000 per hari</span></p>
+                            <p>• Akses seharian penuh dari pukul 06:00 - 18:00</p>
+                            <p>• Total harga akan dihitung otomatis berdasarkan jumlah orang</p>
                             <p>• Pembayaran dilakukan setelah booking disetujui admin</p>
                             <div id="calculated-price" class="mt-2 p-2 bg-white rounded-md hidden">
                                 <p class="font-bold text-lg text-blue-900">Estimasi Total: <span id="total-amount">Rp 0</span></p>
@@ -162,38 +154,33 @@
     <script>
         // Auto calculate total price
         document.addEventListener('DOMContentLoaded', function() {
-            const jamMulai = document.getElementById('jam_mulai');
-            const jamSelesai = document.getElementById('jam_selesai');
+            const jumlahOrang = document.getElementById('jumlah_orang');
             const calculatedPriceDiv = document.getElementById('calculated-price');
             const totalAmountSpan = document.getElementById('total-amount');
             
-            const tarifPerJam = 25000; // Ticket utama
+            const tarifHarian = 50000; // Ticket utama per hari
             
             function calculatePrice() {
-                if (jamMulai.value && jamSelesai.value) {
-                    const start = new Date('2000-01-01 ' + jamMulai.value);
-                    const end = new Date('2000-01-01 ' + jamSelesai.value);
-                    const diffHours = (end - start) / (1000 * 60 * 60);
+                const jumlah = parseInt(jumlahOrang.value) || 1;
+                
+                if (jumlah > 0) {
+                    const totalPrice = jumlah * tarifHarian;
                     
-                    if (diffHours > 0) {
-                        const totalPrice = diffHours * tarifPerJam;
-                        
-                        // Show calculated price
-                        totalAmountSpan.textContent = 'Rp ' + totalPrice.toLocaleString('id-ID');
-                        calculatedPriceDiv.classList.remove('hidden');
-                        
-                        console.log('Jenis Kolam: kolam_utama, Durasi: ' + diffHours + ' jam, Total: Rp ' + totalPrice.toLocaleString('id-ID'));
-                    } else {
-                        calculatedPriceDiv.classList.add('hidden');
-                    }
+                    // Show calculated price
+                    totalAmountSpan.textContent = 'Rp ' + totalPrice.toLocaleString('id-ID');
+                    calculatedPriceDiv.classList.remove('hidden');
+                    
+                    console.log('Jenis Kolam: kolam_utama, Jumlah Orang: ' + jumlah + ', Total: Rp ' + totalPrice.toLocaleString('id-ID'));
                 } else {
                     calculatedPriceDiv.classList.add('hidden');
                 }
             }
             
             // Add event listeners
-            jamMulai.addEventListener('change', calculatePrice);
-            jamSelesai.addEventListener('change', calculatePrice);
+            jumlahOrang.addEventListener('input', calculatePrice);
+            
+            // Calculate initial price
+            calculatePrice();
         });
     </script>
 </body>

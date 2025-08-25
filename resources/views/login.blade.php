@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
     <style>
         .pool-background {
-            background-image: url('{{ asset('kolam1.jpg') }}');
+            background-image: url('{{ asset('kolam.png') }}');
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;

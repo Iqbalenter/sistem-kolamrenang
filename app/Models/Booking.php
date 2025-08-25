@@ -15,11 +15,9 @@ class Booking extends Model
         'nama_pemesan',
         'nomor_telepon',
         'tanggal_booking',
-        'jam_mulai',
-        'jam_selesai',
         'jumlah_orang',
         'jenis_kolam',
-        'tarif_per_jam',
+        'tarif_harian',
         'total_harga',
         'status',
         'status_pembayaran',
@@ -35,9 +33,7 @@ class Booking extends Model
 
     protected $casts = [
         'tanggal_booking' => 'date',
-        'jam_mulai' => 'datetime:H:i',
-        'jam_selesai' => 'datetime:H:i',
-        'tarif_per_jam' => 'decimal:2',
+        'tarif_harian' => 'decimal:2',
         'total_harga' => 'decimal:2',
         'approved_at' => 'datetime',
         'rejected_at' => 'datetime'
@@ -49,23 +45,10 @@ class Booking extends Model
         return $this->belongsTo(User::class);
     }
 
-    // Method untuk menghitung durasi booking
-    public function getDurasiAttribute()
+    // Method untuk mendapatkan informasi hari booking
+    public function getHariBookingAttribute()
     {
-        $start = \Carbon\Carbon::parse($this->jam_mulai);
-        $end = \Carbon\Carbon::parse($this->jam_selesai);
-        
-        // Hitung durasi dengan cara yang lebih akurat
-        $durasi = $end->diffInHours($start);
-        
-        // Jika durasi negatif, gunakan perhitungan manual
-        if ($durasi < 0) {
-            $startTime = strtotime($start->format('H:i:s'));
-            $endTime = strtotime($end->format('H:i:s'));
-            $durasi = ($endTime - $startTime) / 3600; // Konversi ke jam
-        }
-        
-        return $durasi;
+        return $this->tanggal_booking->format('l, d F Y');
     }
 
     // Method untuk format status
@@ -111,12 +94,12 @@ class Booking extends Model
         };
     }
 
-    // Method untuk mendapatkan tarif berdasarkan jenis kolam
-    public static function getTarifByJenisKolam($jenisKolam)
+    // Method untuk mendapatkan tarif harian berdasarkan jenis kolam
+    public static function getTarifHarianByJenisKolam($jenisKolam)
     {
         return match($jenisKolam) {
-            'kolam_utama' => 25000,
-            default => 25000 // default ke kolam utama
+            'kolam_utama' => 50000, // Tarif harian untuk kolam utama
+            default => 50000 // default ke kolam utama
         };
     }
 

@@ -103,11 +103,11 @@
                 <div class="space-y-2">
                     <div class="flex justify-between">
                         <span class="text-gray-600">Kolam Utama</span>
-                        <span class="font-semibold text-blue-600">Rp 25.000/jam</span>
+                        <span class="font-semibold text-blue-600">Rp 50.000/hari</span>
                     </div>
                     <div class="flex justify-between">
                         <span class="text-gray-600">Kolam Anak</span>
-                        <span class="font-semibold text-blue-600">Rp 15.000/jam</span>
+                        <span class="font-semibold text-blue-600">Rp 35.000/hari</span>
                     </div>
                     <div class="flex justify-between">
                         <span class="text-gray-600">Paket Keluarga</span>

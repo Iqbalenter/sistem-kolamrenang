@@ -45,7 +45,7 @@
                         <p><strong>Ukuran:</strong> 25m x 12m</p>
                         <p><strong>Kedalaman:</strong> 1.5m - 2.5m</p>
                         <p><strong>Kapasitas:</strong> 20 orang</p>
-                        <p><strong>Tarif:</strong> Rp 25.000/jam</p>
+                        <p><strong>Tarif:</strong> Rp 50.000/hari</p>
                     </div>
                 </div>
             </div>
@@ -58,7 +58,7 @@
                         <p><strong>Ukuran:</strong> 10m x 8m</p>
                         <p><strong>Kedalaman:</strong> 0.5m - 1.0m</p>
                         <p><strong>Kapasitas:</strong> 15 anak</p>
-                        <p><strong>Tarif:</strong> Rp 15.000/jam</p>
+                        <p><strong>Tarif:</strong> Rp 35.000/hari</p>
                     </div>
                 </div>
             </div>
@@ -72,7 +72,7 @@
                     <p class="mb-2"><strong>Ketentuan Booking:</strong></p>
                     <ul class="list-disc list-inside space-y-1">
                         <li>Booking minimal 1 jam sebelum kedatangan</li>
-                        <li>Durasi minimum 1 jam</li>
+                                                    <li>Akses seharian penuh dari pukul 06:00 - 18:00</li>
                         <li>Pembayaran di tempat</li>
                         <li>Membawa peralatan renang sendiri</li>
                     </ul>

@@ -32,7 +32,8 @@ class DatabaseSeeder extends Seeder
             'role' => 'user',
         ]);
 
-        // Call StokAlatSeeder
+        // Call seeders in order
+        $this->call(JenisAlatSeeder::class);
         $this->call(StokAlatSeeder::class);
     }
 }

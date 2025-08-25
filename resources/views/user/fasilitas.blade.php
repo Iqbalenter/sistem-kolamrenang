@@ -57,7 +57,7 @@
                         </div>
                         <div class="flex items-center">
                             <span class="text-green-500 mr-3">💰</span>
-                            <span><strong>Tarif:</strong> Rp 15.000/jam</span>
+                            <span><strong>Tarif:</strong> Rp 35.000/hari</span>
                         </div>
                     </div>
                 </div>
@@ -83,7 +83,7 @@
                         </div>
                         <div class="flex items-center">
                             <span class="text-blue-500 mr-3">💰</span>
-                            <span><strong>Tarif:</strong> Rp 25.000/jam</span>
+                            <span><strong>Tarif:</strong> Rp 50.000/hari</span>
                         </div>
                     </div>
                 </div>

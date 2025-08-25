@@ -117,7 +117,7 @@
                         <td>{{ $index + 1 }}</td>
                         <td>#{{ $booking->id }}</td>
                         <td>{{ $booking->tanggal_booking->format('d/m/Y') }}</td>
-                        <td>{{ date('H:i', strtotime($booking->jam_mulai)) }} - {{ date('H:i', strtotime($booking->jam_selesai)) }}</td>
+                        <td>06:00 - 18:00 (Seharian Penuh)</td>
                         <td>{{ $booking->nama_pemesan }}</td>
                         <td>{{ $booking->jenis_kolam_label }}</td>
                         <td>{{ $booking->jumlah_orang }} orang</td>

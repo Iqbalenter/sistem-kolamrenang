@@ -144,7 +144,7 @@
             </div>
             <div class="info-item">
                 <div class="info-label">Jam Berenang</div>
-                <div class="info-value">{{ date('H:i', strtotime($booking->jam_mulai)) }} - {{ date('H:i', strtotime($booking->jam_selesai)) }}</div>
+                <div class="info-value">06:00 - 18:00 (Seharian Penuh)</div>
             </div>
             <div class="info-item">
                 <div class="info-label">Nama Pemesan</div>
@@ -163,12 +163,12 @@
                 <div class="info-value">{{ $booking->jumlah_orang }} orang</div>
             </div>
             <div class="info-item">
-                <div class="info-label">Durasi</div>
-                <div class="info-value">{{ $booking->durasi }} jam</div>
+                            <div class="info-label">Akses</div>
+            <div class="info-value">Seharian Penuh</div>
             </div>
             <div class="info-item">
-                <div class="info-label">Tarif per Jam</div>
-                <div class="info-value">Rp {{ number_format($booking->tarif_per_jam, 0, ',', '.') }}</div>
+                <div class="info-label">Tarif Harian</div>
+                <div class="info-value">Rp {{ number_format($booking->tarif_harian ?? 50000, 0, ',', '.') }}</div>
             </div>
             <div class="info-item">
                 <div class="info-label">Status Booking</div>
@@ -213,7 +213,7 @@
                 <div style="font-weight: bold; margin-bottom: 5px;">BOOKING #{{ $booking->id }}</div>
                 <div style="font-size: 9px; color: #666;">
                     {{ $booking->tanggal_booking->format('d/m/Y') }}<br>
-                    {{ date('H:i', strtotime($booking->jam_mulai)) }} - {{ date('H:i', strtotime($booking->jam_selesai)) }}<br>
+                    06:00 - 18:00 (Seharian Penuh)<br>
                     {{ $booking->nama_pemesan }}
                 </div>
             </div>

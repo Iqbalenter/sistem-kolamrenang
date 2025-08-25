@@ -17,8 +17,6 @@ class BookingSewaAlat extends Model
         'jenis_jaminan',
         'foto_jaminan',
         'tanggal_sewa',
-        'jam_mulai',
-        'jam_selesai',
         'jenis_alat',
         'jumlah_alat',
         'harga_per_item',
@@ -39,8 +37,6 @@ class BookingSewaAlat extends Model
 
     protected $casts = [
         'tanggal_sewa' => 'date',
-        'jam_mulai' => 'datetime:H:i',
-        'jam_selesai' => 'datetime:H:i',
         'harga_per_item' => 'decimal:2',
         'total_harga' => 'decimal:2',
         'alat_dikembalikan' => 'boolean',
@@ -53,12 +49,6 @@ class BookingSewaAlat extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
-    }
-
-    // Relationship dengan JenisAlat
-    public function jenisAlat(): BelongsTo
-    {
-        return $this->belongsTo(JenisAlat::class, 'jenis_alat', 'kode');
     }
 
     // Accessor untuk compatibility dengan view
@@ -99,25 +89,15 @@ class BookingSewaAlat extends Model
     // Method untuk format jenis alat
     public function getJenisAlatLabelAttribute()
     {
-        // Coba relasi dulu
-        if ($this->jenisAlat) {
-            return $this->jenisAlat->nama;
-        }
-        
-        // Jika relasi gagal, coba cari manual
-        $jenisAlat = JenisAlat::getByKode($this->jenis_alat);
-        if ($jenisAlat) {
-            return $jenisAlat->nama;
-        }
-        
-        // Jika masih tidak ditemukan, coba perbaiki data
-        $firstJenisAlat = JenisAlat::first();
-        if ($firstJenisAlat) {
-            $this->update(['jenis_alat' => $firstJenisAlat->kode]);
-            return $firstJenisAlat->nama;
-        }
-        
-        return 'Unknown';
+        return match($this->jenis_alat) {
+            'ban_renang' => 'Ban Renang',
+            'kacamata_renang' => 'Kacamata Renang',
+            'papan_renang' => 'Papan Renang',
+            'pelampung' => 'Pelampung',
+            'fins' => 'Fins (Kaki Katak)',
+            'snorkel' => 'Snorkel',
+            default => 'Unknown'
+        };
     }
 
     // Method untuk format jenis jaminan
@@ -131,23 +111,23 @@ class BookingSewaAlat extends Model
     }
 
     // Method untuk mendapatkan harga berdasarkan jenis alat (per hari)
-    public static function getHargaByJenisAlat($jenisAlatKode)
+    public static function getHargaByJenisAlat($jenisAlat)
     {
-        $jenisAlat = JenisAlat::getByKode($jenisAlatKode);
-        if (!$jenisAlat) {
-            return 0;
-        }
-        
-        $stokAlat = StokAlat::where('jenis_alat_id', $jenisAlat->id)
-            ->where('is_active', true)
-            ->first();
-            
+        $stokAlat = StokAlat::getStokByJenis($jenisAlat);
         if ($stokAlat) {
             return $stokAlat->harga_sewa;
         }
         
         // Fallback ke harga default jika tidak ada di stok
-        return 0;
+        return match($jenisAlat) {
+            'ban_renang' => 15000,
+            'kacamata_renang' => 10000,
+            'papan_renang' => 20000,
+            'pelampung' => 15000,
+            'fins' => 25000,
+            'snorkel' => 20000,
+            default => 15000 // default ke ban renang
+        };
     }
 
     // Method untuk mendapatkan informasi pembayaran lengkap
@@ -220,141 +200,32 @@ class BookingSewaAlat extends Model
         }
     }
 
-    // Method untuk mendapatkan stok alat
-    public function getStokAlat()
+    // Relationship dengan StokAlat
+    public function stokAlat()
     {
-        // Relasi melalui jenis alat
-        $jenisAlat = JenisAlat::getByKode($this->jenis_alat);
-        if (!$jenisAlat) {
-            return null;
-        }
-        return StokAlat::where('jenis_alat_id', $jenisAlat->id)->first();
+        return $this->belongsTo(StokAlat::class, 'jenis_alat', 'jenis_alat');
     }
 
     // Method untuk kurangi stok saat booking dikonfirmasi
     public function kurangiStok()
     {
-        // Debug: Log informasi
-        \Log::info('Attempting to reduce stock:', [
-            'booking_id' => $this->id,
-            'jenis_alat' => $this->jenis_alat,
-            'jumlah_alat' => $this->jumlah_alat
-        ]);
-
-        // Cari stok alat berdasarkan jenis alat
-        $jenisAlat = JenisAlat::getByKode($this->jenis_alat);
-        if (!$jenisAlat) {
-            \Log::error('Jenis alat not found:', ['jenis_alat' => $this->jenis_alat]);
-            return false;
-        }
-        
-        \Log::info('Found jenis alat:', ['jenis_alat_id' => $jenisAlat->id]);
-        
-        $stokAlat = StokAlat::where('jenis_alat_id', $jenisAlat->id)
-            ->where('is_active', true)
-            ->where('stok_tersedia', '>=', $this->jumlah_alat)
-            ->first();
-            
-        if (!$stokAlat) {
-            \Log::error('Stok alat not found or insufficient:', [
-                'jenis_alat_id' => $jenisAlat->id,
-                'stok_tersedia_needed' => $this->jumlah_alat
-            ]);
-            return false;
-        }
-        
-        \Log::info('Found stok alat:', [
-            'stok_alat_id' => $stokAlat->id,
-            'stok_tersedia' => $stokAlat->stok_tersedia,
-            'jumlah_to_reduce' => $this->jumlah_alat
-        ]);
-            
-        if ($stokAlat->kurangiStok($this->jumlah_alat)) {
-            \Log::info('Stock reduced successfully');
+        $stokAlat = StokAlat::getStokByJenis($this->jenis_alat);
+        if ($stokAlat && $stokAlat->kurangiStok($this->jumlah_alat)) {
             return true;
         }
-        
-        \Log::error('Failed to reduce stock');
         return false;
     }
 
     // Method untuk kembalikan stok saat alat dikembalikan
     public function kembalikanStok()
     {
-        // Debug: Log informasi
-        \Log::info('Attempting to return stock:', [
-            'booking_id' => $this->id,
-            'jenis_alat' => $this->jenis_alat,
-            'jumlah_alat' => $this->jumlah_alat
-        ]);
-
-        // Cari stok alat berdasarkan jenis alat
-        $jenisAlat = JenisAlat::getByKode($this->jenis_alat);
-        if (!$jenisAlat) {
-            \Log::error('Jenis alat not found for return:', ['jenis_alat' => $this->jenis_alat]);
-            
-            // Coba perbaiki jenis alat yang tidak sesuai
-            $firstJenisAlat = JenisAlat::first();
-            if ($firstJenisAlat) {
-                $this->update(['jenis_alat' => $firstJenisAlat->kode]);
-                $jenisAlat = $firstJenisAlat;
-                \Log::info('Fixed jenis alat for return:', [
-                    'booking_id' => $this->id,
-                    'old_jenis_alat' => $this->jenis_alat,
-                    'new_jenis_alat' => $firstJenisAlat->kode
-                ]);
-            } else {
-                return false;
-            }
-        }
-        
-        \Log::info('Found jenis alat for return:', ['jenis_alat_id' => $jenisAlat->id]);
-        
-        $stokAlat = StokAlat::where('jenis_alat_id', $jenisAlat->id)
-            ->where('is_active', true)
-            ->first();
-            
-        if (!$stokAlat) {
-            \Log::error('Stok alat not found for return:', [
-                'jenis_alat_id' => $jenisAlat->id
-            ]);
-            return false;
-        }
-        
-        \Log::info('Found stok alat for return:', [
-            'stok_alat_id' => $stokAlat->id,
-            'stok_tersedia' => $stokAlat->stok_tersedia,
-            'jumlah_to_add' => $this->jumlah_alat
-        ]);
-            
-        if ($stokAlat->tambahStok($this->jumlah_alat)) {
+        $stokAlat = StokAlat::getStokByJenis($this->jenis_alat);
+        if ($stokAlat) {
+            $stokAlat->tambahStok($this->jumlah_alat);
             $this->update([
                 'alat_dikembalikan' => true,
                 'tanggal_pengembalian' => now()
             ]);
-            \Log::info('Stock returned successfully');
-            return true;
-        }
-        
-        \Log::error('Failed to return stock');
-        return false;
-    }
-
-    // Method untuk kembalikan stok tanpa mengupdate status pengembalian (untuk reject)
-    public function kembalikanStokTanpaStatus()
-    {
-        // Cari stok alat berdasarkan jenis alat
-        $jenisAlat = JenisAlat::getByKode($this->jenis_alat);
-        if (!$jenisAlat) {
-            return false;
-        }
-        
-        $stokAlat = StokAlat::where('jenis_alat_id', $jenisAlat->id)
-            ->where('is_active', true)
-            ->first();
-            
-        if ($stokAlat) {
-            $stokAlat->tambahStok($this->jumlah_alat);
             return true;
         }
         return false;
@@ -363,20 +234,6 @@ class BookingSewaAlat extends Model
     // Method untuk cek apakah alat bisa dikembalikan
     public function bisaDikembalikan()
     {
-        return $this->status === 'approved' && 
-               $this->status_pembayaran === 'lunas' && 
-               !$this->alat_dikembalikan;
-    }
-
-    // Accessor untuk durasi (sewa alat per hari)
-    public function getDurasiAttribute()
-    {
-        return 1; // Sewa alat selalu 1 hari
-    }
-
-    // Accessor untuk harga per jam (alias untuk harga_per_item)
-    public function getHargaPerJamAttribute()
-    {
-        return $this->harga_per_item;
+        return $this->status_pembayaran === 'lunas' && !$this->alat_dikembalikan;
     }
 }

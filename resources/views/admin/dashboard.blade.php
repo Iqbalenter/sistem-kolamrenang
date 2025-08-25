@@ -107,11 +107,7 @@
                                         {{ $booking->tanggal_booking ? $booking->tanggal_booking->format('d/m/Y') : 'N/A' }}
                                     </div>
                                     <div class="text-xs sm:text-sm text-gray-500">
-                                        @if($booking->jam_mulai && $booking->jam_selesai)
-                                            {{ \Carbon\Carbon::parse($booking->jam_mulai)->format('H:i') }} - {{ \Carbon\Carbon::parse($booking->jam_selesai)->format('H:i') }}
-                                        @else
-                                            N/A
-                                        @endif
+                                        06:00 - 18:00 (Seharian)
                                     </div>
                                 </td>
                                 <td class="px-3 sm:px-4 py-2 sm:py-3 whitespace-nowrap text-xs sm:text-sm text-gray-900 font-medium">
@@ -165,11 +161,7 @@
                                         {{ $booking->tanggal_booking ? $booking->tanggal_booking->format('d/m/Y') : 'N/A' }}
                                     </div>
                                     <div class="text-xs sm:text-sm text-gray-500">
-                                        @if($booking->jam_mulai && $booking->jam_selesai)
-                                            {{ \Carbon\Carbon::parse($booking->jam_mulai)->format('H:i') }} - {{ \Carbon\Carbon::parse($booking->jam_selesai)->format('H:i') }}
-                                        @else
-                                            N/A
-                                        @endif
+                                        06:00 - 18:00 (Seharian)
                                     </div>
                                 </td>
                                 <td class="px-3 sm:px-4 py-2 sm:py-3 whitespace-nowrap">

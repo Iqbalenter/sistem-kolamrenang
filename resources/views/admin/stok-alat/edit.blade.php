@@ -1,10 +1,14 @@
-@extends('admin.layouts.app')
-
-@section('title', 'Edit Stok Alat')
-@section('page-title', 'Edit Stok Alat')
-@section('page-description', 'Edit informasi stok alat renang')
-
-@section('content')
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Stok Alat</title>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+</head>
+<body class="bg-gray-50">
+    @include('components.admin-navbar')
+    
     <div class="min-h-screen py-12 px-4">
         <div class="max-w-2xl mx-auto">
             <!-- Header -->
@@ -55,7 +59,6 @@
                                    value="{{ $stokAlat->jenis_alat_label }}"
                                    class="w-full px-3 py-2 bg-gray-100 border border-gray-300 rounded-md"
                                    readonly>
-                            <input type="hidden" name="jenis_alat_id" value="{{ $stokAlat->jenis_alat_id }}">
                             <p class="text-xs text-gray-500 mt-1">Jenis alat tidak dapat diubah setelah dibuat</p>
                         </div>
                         
@@ -117,6 +120,16 @@
                                   placeholder="Deskripsi tambahan tentang alat...">{{ old('deskripsi', $stokAlat->deskripsi) }}</textarea>
                     </div>
 
+                    <div>
+                        <label class="flex items-center">
+                            <input type="checkbox" name="is_active" 
+                                   {{ old('is_active', $stokAlat->is_active) ? 'checked' : '' }}
+                                   class="rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                            <span class="ml-2 text-sm text-gray-600">Aktif</span>
+                        </label>
+                        <p class="text-xs text-gray-500 mt-1">Alat yang tidak aktif tidak akan muncul di form booking</p>
+                    </div>
+
                     <!-- Submit Button -->
                     <div class="flex justify-end space-x-4">
                         <a href="{{ route('admin.stok-alat.index') }}" 
@@ -132,4 +145,5 @@
             </div>
         </div>
     </div>
-@endsection
+</body>
+</html>
