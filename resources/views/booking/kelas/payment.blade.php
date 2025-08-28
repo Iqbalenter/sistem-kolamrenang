@@ -371,14 +371,54 @@
     </div>
 
     <script>
+        // Function untuk setup event listeners
+        function setupProviderListeners() {
+            const bankSelect = document.querySelector('select[name="provider_pembayaran_bank"]');
+            const ewalletSelect = document.querySelector('select[name="provider_pembayaran_ewallet"]');
+            const nomorTujuanInput = document.getElementById('nomor_tujuan');
+            const providerInput = document.getElementById('provider_pembayaran');
+
+            if (bankSelect) {
+                bankSelect.addEventListener('change', function() {
+                    const bankInfo = {
+                        'BCA': '1234567890',
+                        'Mandiri': '9876543210',
+                        'BRI': '5555444433',
+                        'BNI': '7777888899'
+                    };
+                    if (this.value && bankInfo[this.value] && nomorTujuanInput && providerInput) {
+                        nomorTujuanInput.value = bankInfo[this.value];
+                        providerInput.value = this.value;
+                    }
+                });
+            }
+
+            if (ewalletSelect) {
+                ewalletSelect.addEventListener('change', function() {
+                    if (this.value && nomorTujuanInput && providerInput) {
+                        nomorTujuanInput.value = '081234567890';
+                        providerInput.value = this.value;
+                    }
+                });
+            }
+        }
+
         function togglePaymentForm() {
             const paymentForm = document.getElementById('payment-form');
-            paymentForm.classList.toggle('hidden');
+            if (paymentForm) {
+                paymentForm.classList.toggle('hidden');
+                // Re-setup listeners ketika form dibuka
+                if (!paymentForm.classList.contains('hidden')) {
+                    setTimeout(setupProviderListeners, 100);
+                }
+            }
         }
 
         function toggleUploadForm() {
             const uploadForm = document.getElementById('upload-form');
-            uploadForm.classList.toggle('hidden');
+            if (uploadForm) {
+                uploadForm.classList.toggle('hidden');
+            }
         }
 
         document.addEventListener('DOMContentLoaded', function() {
@@ -398,45 +438,18 @@
                 });
             });
 
-            // Handle provider selection
-            const bankSelect = document.querySelector('select[name="provider_pembayaran_bank"]');
-            const ewalletSelect = document.querySelector('select[name="provider_pembayaran_ewallet"]');
-            const nomorTujuanInput = document.getElementById('nomor_tujuan');
-            const providerInput = document.getElementById('provider_pembayaran');
-
-            if (bankSelect) {
-                bankSelect.addEventListener('change', function() {
-                    const bankInfo = {
-                        'BCA': '1234567890',
-                        'Mandiri': '9876543210',
-                        'BRI': '5555444433',
-                        'BNI': '7777888899'
-                    };
-                    if (this.value && bankInfo[this.value]) {
-                        nomorTujuanInput.value = bankInfo[this.value];
-                        providerInput.value = this.value;
-                    }
-                });
-            }
-
-            if (ewalletSelect) {
-                ewalletSelect.addEventListener('change', function() {
-                    if (this.value) {
-                        nomorTujuanInput.value = '081234567890';
-                        providerInput.value = this.value;
-                    }
-                });
-            }
+            // Setup initial listeners saat halaman load
+            setupProviderListeners();
 
             // Close modals when clicking outside
             window.onclick = function(event) {
                 const paymentForm = document.getElementById('payment-form');
                 const uploadForm = document.getElementById('upload-form');
                 
-                if (event.target == paymentForm) {
+                if (paymentForm && event.target == paymentForm) {
                     paymentForm.classList.add('hidden');
                 }
-                if (event.target == uploadForm) {
+                if (uploadForm && event.target == uploadForm) {
                     uploadForm.classList.add('hidden');
                 }
             }

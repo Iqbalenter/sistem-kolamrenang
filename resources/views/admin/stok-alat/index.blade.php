@@ -1,74 +1,59 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kelola Stok Alat</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-</head>
-<body class="bg-gray-50">
-    @include('components.admin-navbar')
-    
-    <div class="min-h-screen py-12 px-4">
-        <div class="max-w-6xl mx-auto">
-            <!-- Header -->
-            <div class="bg-white rounded-lg shadow-md p-6 mb-6">
-                <div class="flex items-center justify-between">
-                    <h1 class="text-2xl font-bold text-gray-900">Kelola Stok Alat</h1>
-                    <a href="{{ route('admin.stok-alat.create') }}" 
-                       class="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700">
-                        Tambah Stok Alat
-                    </a>
-                </div>
-            </div>
+@extends('admin.layouts.app')
 
-            <!-- Alert Messages -->
-            @if(session('success'))
-                <div class="mb-6 p-4 bg-green-100 border border-green-400 text-green-700 rounded-lg">
-                    {{ session('success') }}
-                </div>
-            @endif
-            
-            @if(session('error'))
-                <div class="mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">
-                    {{ session('error') }}
-                </div>
-            @endif
+@section('title', 'Kelola Stok Alat')
+@section('page-title', 'Kelola Stok Alat')
+@section('page-description', 'Manajemen inventori alat renang')
 
-            <!-- Tabel Stok Alat -->
-            <div class="bg-white rounded-lg shadow-md overflow-hidden">
-                <div class="px-6 py-4 border-b border-gray-200">
-                    <h2 class="text-lg font-semibold text-gray-900">Daftar Stok Alat</h2>
-                </div>
+@section('content')
+<!-- Header Actions -->
+<div class="glass-card rounded-xl p-4 sm:p-6 mb-4 sm:mb-6 border border-white border-opacity-20">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-3 sm:space-y-0">
+        <div>
+            <h2 class="text-lg sm:text-xl font-semibold text-white">Daftar Stok Alat</h2>
+            <p class="text-sm text-white text-opacity-80">Kelola inventori semua alat renang</p>
+        </div>
+        <a href="{{ route('admin.stok-alat.create') }}" 
+           class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors inline-flex items-center justify-center">
+            <i class="fas fa-plus mr-2"></i>
+            Tambah Stok Alat
+        </a>
+    </div>
+</div>
+
+<!-- Tabel Stok Alat -->
+<div class="bg-white rounded-xl shadow-lg overflow-hidden">
+    <div class="px-4 sm:px-6 py-4 border-b border-gray-200 bg-gray-50">
+        <h3 class="text-lg font-semibold text-gray-900">Data Stok Alat</h3>
+    </div>
                 
-                <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-200">
-                        <thead class="bg-gray-50">
-                            <tr>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Jenis Alat
-                                </th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Nama Alat
-                                </th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Stok Total
-                                </th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Stok Tersedia
-                                </th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Harga Sewa
-                                </th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Status
-                                </th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Aksi
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody class="bg-white divide-y divide-gray-200">
+    <div class="overflow-x-auto">
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Jenis Alat
+                    </th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Nama Alat
+                    </th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Stok Total
+                    </th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Stok Tersedia
+                    </th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Harga Sewa
+                    </th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Status
+                    </th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Aksi
+                    </th>
+                </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
                             @forelse($stokAlats as $stok)
                                 <tr>
                                     <td class="px-6 py-4 whitespace-nowrap">
@@ -129,19 +114,17 @@
                                         </div>
                                     </td>
                                 </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="7" class="px-6 py-4 text-center text-gray-500">
-                                        Belum ada data stok alat
-                                    </td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
+                @empty
+                    <tr>
+                        <td colspan="7" class="px-6 py-4 text-center text-gray-500">
+                            Belum ada data stok alat
+                        </td>
+                    </tr>
+                @endforelse
+            </tbody>
+        </table>
     </div>
+</div>
 
     <!-- Modal Adjust Stok -->
     <div id="adjustModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden">
@@ -201,5 +184,4 @@
             document.getElementById('adjustModal').classList.add('hidden');
         }
     </script>
-</body>
-</html>
+@endsection

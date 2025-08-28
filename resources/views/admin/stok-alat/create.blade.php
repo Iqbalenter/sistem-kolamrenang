@@ -1,81 +1,60 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tambah Stok Alat</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-</head>
-<body class="bg-gray-50">
-    @include('components.admin-navbar')
-    
-    <div class="min-h-screen py-12 px-4">
-        <div class="max-w-2xl mx-auto">
-            <!-- Header -->
-            <div class="bg-white rounded-lg shadow-md p-6 mb-6">
-                <div class="flex items-center justify-between">
-                    <h1 class="text-2xl font-bold text-gray-900">Tambah Stok Alat</h1>
-                    <a href="{{ route('admin.stok-alat.index') }}" class="text-indigo-600 hover:text-indigo-800">
-                        ← Kembali ke Daftar Stok
-                    </a>
-                </div>
+@extends('admin.layouts.app')
+
+@section('title', 'Tambah Stok Alat')
+@section('page-title', 'Tambah Stok Alat')
+@section('page-description', 'Menambahkan alat renang baru ke inventori')
+
+@section('content')
+<!-- Header Actions -->
+<div class="glass-card rounded-xl p-4 sm:p-6 mb-4 sm:mb-6 border border-white border-opacity-20">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-3 sm:space-y-0">
+        <div>
+            <h2 class="text-lg sm:text-xl font-semibold text-white">Form Tambah Stok Alat</h2>
+            <p class="text-sm text-white text-opacity-80">Isi data alat renang yang akan ditambahkan</p>
+        </div>
+        <a href="{{ route('admin.stok-alat.index') }}" 
+           class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors inline-flex items-center justify-center">
+            <i class="fas fa-arrow-left mr-2"></i>
+            Kembali ke Daftar
+        </a>
+    </div>
+</div>
+
+@if ($errors->any())
+    <div class="mb-4 sm:mb-6 p-3 sm:p-4 glass-card border border-red-400 text-white rounded-lg text-sm sm:text-base">
+        <div class="flex items-start">
+            <i class="fas fa-exclamation-circle mr-2 flex-shrink-0 mt-0.5"></i>
+            <div>
+                <p class="font-medium mb-2">Terdapat kesalahan pada input:</p>
+                <ul class="list-disc list-inside space-y-1">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
             </div>
+        </div>
+    </div>
+@endif
 
-            <!-- Alert Messages -->
-            @if(session('success'))
-                <div class="mb-6 p-4 bg-green-100 border border-green-400 text-green-700 rounded-lg">
-                    {{ session('success') }}
-                </div>
-            @endif
-            
-            @if(session('error'))
-                <div class="mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">
-                    {{ session('error') }}
-                </div>
-            @endif
-
-            @if ($errors->any())
-                <div class="mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">
-                    <ul class="list-disc ml-5">
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            @endif
-
-            <!-- Form Tambah Stok -->
-            <div class="bg-white rounded-lg shadow-md p-6">
+<!-- Form Tambah Stok -->
+<div class="bg-white rounded-xl shadow-lg p-4 sm:p-6">
                 <form action="{{ route('admin.stok-alat.store') }}" method="POST" class="space-y-6">
                     @csrf
                     
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <label for="jenis_alat" class="block text-sm font-medium text-gray-700 mb-2">
+                            <label for="jenis_alat_id" class="block text-sm font-medium text-gray-700 mb-2">
                                 Jenis Alat <span class="text-red-500">*</span>
                             </label>
-                            <select id="jenis_alat" name="jenis_alat" 
+                            <select id="jenis_alat_id" name="jenis_alat_id" 
                                     class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
                                     required>
                                 <option value="">Pilih Jenis Alat</option>
-                                <option value="ban_renang" {{ old('jenis_alat') == 'ban_renang' ? 'selected' : '' }}>
-                                    Ban Renang
-                                </option>
-                                <option value="kacamata_renang" {{ old('jenis_alat') == 'kacamata_renang' ? 'selected' : '' }}>
-                                    Kacamata Renang
-                                </option>
-                                <option value="papan_renang" {{ old('jenis_alat') == 'papan_renang' ? 'selected' : '' }}>
-                                    Papan Renang
-                                </option>
-                                <option value="pelampung" {{ old('jenis_alat') == 'pelampung' ? 'selected' : '' }}>
-                                    Pelampung
-                                </option>
-                                <option value="fins" {{ old('jenis_alat') == 'fins' ? 'selected' : '' }}>
-                                    Fins (Kaki Katak)
-                                </option>
-                                <option value="snorkel" {{ old('jenis_alat') == 'snorkel' ? 'selected' : '' }}>
-                                    Snorkel
-                                </option>
+                                @foreach($jenisAlats as $jenis)
+                                    <option value="{{ $jenis->id }}" {{ old('jenis_alat_id') == $jenis->id ? 'selected' : '' }}>
+                                        {{ $jenis->nama }}
+                                    </option>
+                                @endforeach
                             </select>
                         </div>
                         
@@ -127,20 +106,18 @@
                                   placeholder="Deskripsi tambahan tentang alat...">{{ old('deskripsi') }}</textarea>
                     </div>
 
-                    <!-- Submit Button -->
-                    <div class="flex justify-end space-x-4">
-                        <a href="{{ route('admin.stok-alat.index') }}" 
-                           class="px-6 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">
-                            Batal
-                        </a>
-                        <button type="submit" 
-                                class="px-6 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                            Simpan Stok Alat
-                        </button>
-                    </div>
-                </form>
-            </div>
+        <!-- Submit Button -->
+        <div class="flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-4">
+            <a href="{{ route('admin.stok-alat.index') }}" 
+               class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 text-center transition-colors">
+                Batal
+            </a>
+            <button type="submit" 
+                    class="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                <i class="fas fa-save mr-2"></i>
+                Simpan Stok Alat
+            </button>
         </div>
-    </div>
-</body>
-</html>
+    </form>
+</div>
+@endsection

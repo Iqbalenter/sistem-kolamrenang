@@ -86,9 +86,21 @@ class BookingSewaAlat extends Model
         };
     }
 
-    // Method untuk format jenis alat
+    // Method untuk format jenis alat - dinamis dari database
     public function getJenisAlatLabelAttribute()
     {
+        // Gunakan relationship untuk efisiensi
+        if ($this->jenisAlat) {
+            return $this->jenisAlat->nama;
+        }
+        
+        // Fallback: cari manual jika relationship belum di-load
+        $jenisAlat = \App\Models\JenisAlat::where('kode', $this->jenis_alat)->first();
+        if ($jenisAlat) {
+            return $jenisAlat->nama;
+        }
+        
+        // Fallback untuk data lama yang mungkin masih menggunakan format lama
         return match($this->jenis_alat) {
             'ban_renang' => 'Ban Renang',
             'kacamata_renang' => 'Kacamata Renang',
@@ -96,7 +108,7 @@ class BookingSewaAlat extends Model
             'pelampung' => 'Pelampung',
             'fins' => 'Fins (Kaki Katak)',
             'snorkel' => 'Snorkel',
-            default => 'Unknown'
+            default => $this->jenis_alat ?? 'Unknown' // Tampilkan kode asli jika tidak ditemukan
         };
     }
 
@@ -114,20 +126,13 @@ class BookingSewaAlat extends Model
     public static function getHargaByJenisAlat($jenisAlat)
     {
         $stokAlat = StokAlat::getStokByJenis($jenisAlat);
-        if ($stokAlat) {
+        if ($stokAlat && $stokAlat->harga_sewa > 0) {
             return $stokAlat->harga_sewa;
         }
         
-        // Fallback ke harga default jika tidak ada di stok
-        return match($jenisAlat) {
-            'ban_renang' => 15000,
-            'kacamata_renang' => 10000,
-            'papan_renang' => 20000,
-            'pelampung' => 15000,
-            'fins' => 25000,
-            'snorkel' => 20000,
-            default => 15000 // default ke ban renang
-        };
+        // Jika tidak ada stok atau harga tidak valid, return 0
+        // untuk mencegah booking alat yang tidak tersedia
+        return 0;
     }
 
     // Method untuk mendapatkan informasi pembayaran lengkap
@@ -204,6 +209,12 @@ class BookingSewaAlat extends Model
     public function stokAlat()
     {
         return $this->belongsTo(StokAlat::class, 'jenis_alat', 'jenis_alat');
+    }
+
+    // Relationship dengan JenisAlat
+    public function jenisAlat()
+    {
+        return $this->belongsTo(JenisAlat::class, 'jenis_alat', 'kode');
     }
 
     // Method untuk kurangi stok saat booking dikonfirmasi

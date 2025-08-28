@@ -183,8 +183,8 @@
                                 <dd class="text-sm font-medium">{{ $bookingSewaAlat->jenis_alat_label }}</dd>
                             </div>
                             <div class="flex justify-between">
-                                <dt class="text-sm text-gray-500">Tarif per jam:</dt>
-                                <dd class="text-sm font-medium">Rp {{ number_format($bookingSewaAlat->harga_per_jam, 0, ',', '.') }}</dd>
+                                <dt class="text-sm text-gray-500">Harga per Item:</dt>
+                                <dd class="text-sm font-medium">Rp {{ number_format($bookingSewaAlat->harga_per_item, 0, ',', '.') }}</dd>
                             </div>
                             <div class="flex justify-between">
                                 <dt class="text-sm text-gray-500">Sewa per Hari:</dt>

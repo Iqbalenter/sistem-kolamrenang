@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\StokAlat;
+use App\Models\JenisAlat;
 use Illuminate\Http\Request;
 
 class StokAlatController extends Controller
@@ -10,34 +11,42 @@ class StokAlatController extends Controller
     // Menampilkan halaman kelola stok alat
     public function index()
     {
-        $stokAlats = StokAlat::all();
+        $stokAlats = StokAlat::with('jenisAlat')->get();
         return view('admin.stok-alat.index', compact('stokAlats'));
     }
 
     // Menampilkan form tambah stok alat
     public function create()
     {
-        return view('admin.stok-alat.create');
+        $jenisAlats = JenisAlat::where('is_active', true)->orderBy('nama')->get();
+        return view('admin.stok-alat.create', compact('jenisAlats'));
     }
 
     // Menyimpan stok alat baru
     public function store(Request $request)
     {
         $request->validate([
-            'jenis_alat' => 'required|in:ban_renang,kacamata_renang,papan_renang,pelampung,fins,snorkel|unique:stok_alats,jenis_alat',
+            'jenis_alat_id' => 'required|exists:jenis_alats,id',
             'nama_alat' => 'required|string|max:255',
             'stok_total' => 'required|integer|min:0',
             'harga_sewa' => 'required|numeric|min:0',
             'deskripsi' => 'nullable|string'
         ]);
 
+        // Generate kode_alat otomatis
+        $lastStok = StokAlat::latest('id')->first();
+        $nextId = $lastStok ? $lastStok->id + 1 : 1;
+        $kodeAlat = 'ALAT-' . str_pad($nextId, 4, '0', STR_PAD_LEFT);
+
         StokAlat::create([
-            'jenis_alat' => $request->jenis_alat,
+            'jenis_alat_id' => $request->jenis_alat_id,
             'nama_alat' => $request->nama_alat,
             'stok_total' => $request->stok_total,
             'stok_tersedia' => $request->stok_total, // Awalnya stok tersedia sama dengan total
             'harga_sewa' => $request->harga_sewa,
             'deskripsi' => $request->deskripsi,
+            'kode_alat' => $kodeAlat,
+            'kondisi' => 'baik',
             'is_active' => true
         ]);
 
@@ -47,13 +56,15 @@ class StokAlatController extends Controller
     // Menampilkan form edit stok alat
     public function edit(StokAlat $stokAlat)
     {
-        return view('admin.stok-alat.edit', compact('stokAlat'));
+        $jenisAlats = JenisAlat::where('is_active', true)->orderBy('nama')->get();
+        return view('admin.stok-alat.edit', compact('stokAlat', 'jenisAlats'));
     }
 
     // Update stok alat
     public function update(Request $request, StokAlat $stokAlat)
     {
         $request->validate([
+            'jenis_alat_id' => 'required|exists:jenis_alats,id',
             'nama_alat' => 'required|string|max:255',
             'stok_total' => 'required|integer|min:0',
             'harga_sewa' => 'required|numeric|min:0',
@@ -71,6 +82,7 @@ class StokAlatController extends Controller
         }
 
         $stokAlat->update([
+            'jenis_alat_id' => $request->jenis_alat_id,
             'nama_alat' => $request->nama_alat,
             'stok_total' => $request->stok_total,
             'stok_tersedia' => $stokTersediaBaru,

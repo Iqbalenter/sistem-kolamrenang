@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\BookingSewaAlat;
+use App\Models\StokAlat;
+use App\Models\JenisAlat;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -12,21 +14,45 @@ class BookingSewaAlatController extends Controller
     // Menampilkan form booking sewa alat untuk user
     public function create()
     {
-        return view('booking.sewa-alat.create');
+        // Ambil data alat yang tersedia (stok > 0 dan aktif)
+        $alatTersedia = StokAlat::with('jenisAlat')
+            ->where('is_active', true)
+            ->where('stok_tersedia', '>', 0)
+            ->get()
+            ->groupBy('jenisAlat.kode')
+            ->map(function ($items) {
+                $firstItem = $items->first();
+                return [
+                    'kode' => $firstItem->jenisAlat->kode,
+                    'nama' => $firstItem->jenisAlat->nama,
+                    'harga' => $firstItem->harga_sewa,
+                    'stok_total' => $items->sum('stok_tersedia')
+                ];
+            });
+
+        return view('booking.sewa-alat.create', compact('alatTersedia'));
     }
 
     // Menyimpan booking sewa alat baru
     public function store(Request $request)
     {
+        // Ambil kode jenis alat yang tersedia untuk validasi
+        $jenisAlatTersedia = JenisAlat::where('is_active', true)->pluck('kode')->toArray();
+
         $request->validate([
             'nama_penyewa' => 'required|string|max:255',
             'nomor_telepon' => 'required|string|max:15',
             'tanggal_sewa' => 'required|date|after:today',
             'jenis_jaminan' => 'required|in:ktp,sim',
-            'foto_jaminan' => 'required|image|mimes:jpeg,png,jpg|max:2048',
-            'jenis_alat' => 'required|in:ban_renang,kacamata_renang,papan_renang,pelampung,fins,snorkel',
+            'foto_jaminan' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'jenis_alat' => 'required|in:' . implode(',', $jenisAlatTersedia),
             'jumlah_alat' => 'required|integer|min:1|max:20',
             'catatan' => 'nullable|string'
+        ], [
+            'foto_jaminan.required' => 'Foto jaminan harus diupload.',
+            'foto_jaminan.image' => 'File yang diupload harus berupa gambar.',
+            'foto_jaminan.mimes' => 'Format foto jaminan harus berupa JPEG, PNG, JPG, atau GIF.',
+            'foto_jaminan.max' => 'Ukuran foto jaminan tidak boleh lebih dari 2MB.',
         ]);
 
         // Cek stok alat
@@ -36,8 +62,17 @@ class BookingSewaAlatController extends Controller
         }
 
         // Upload foto jaminan
-        $fileName = time() . '_' . $request->file('foto_jaminan')->getClientOriginalName();
-        $filePath = $request->file('foto_jaminan')->storeAs('foto_jaminan', $fileName, 'public');
+        if (!$request->hasFile('foto_jaminan')) {
+            return back()->with('error', 'Foto jaminan tidak berhasil diupload. Silakan coba lagi.');
+        }
+
+        $file = $request->file('foto_jaminan');
+        if (!$file->isValid()) {
+            return back()->with('error', 'File foto jaminan tidak valid. Silakan pilih file yang benar.');
+        }
+
+        $fileName = time() . '_' . $file->getClientOriginalName();
+        $filePath = $file->storeAs('foto_jaminan', $fileName, 'public');
 
         // Hitung total harga berdasarkan jenis alat dan jumlah (per hari)
         $hargaPerItem = \App\Models\BookingSewaAlat::getHargaByJenisAlat($request->jenis_alat);
@@ -65,7 +100,7 @@ class BookingSewaAlatController extends Controller
     // Menampilkan history booking sewa alat user
     public function history()
     {
-        $bookings = Auth::user()->bookingSewaAlat()->latest()->get();
+        $bookings = Auth::user()->bookingSewaAlat()->with('jenisAlat')->latest()->get();
         return view('booking.sewa-alat.history', compact('bookings'));
     }
 
@@ -73,6 +108,9 @@ class BookingSewaAlatController extends Controller
     public function show(BookingSewaAlat $bookingSewaAlat)
     {
         $user = Auth::user();
+        
+        // Load relationship jenisAlat untuk menampilkan nama yang benar
+        $bookingSewaAlat->load('jenisAlat');
         
         // Pastikan user hanya bisa melihat booking miliknya sendiri (kecuali admin)
         if ($user->role === 'user' && $bookingSewaAlat->user_id !== Auth::id()) {
@@ -179,7 +217,7 @@ class BookingSewaAlatController extends Controller
     // Menampilkan semua booking sewa alat untuk admin
     public function adminIndex()
     {
-        $bookings = BookingSewaAlat::with('user')->latest()->get();
+        $bookings = BookingSewaAlat::with(['user', 'jenisAlat'])->latest()->get();
         return view('admin.booking-sewa-alat.index', compact('bookings'));
     }
 

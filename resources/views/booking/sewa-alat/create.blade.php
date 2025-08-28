@@ -48,36 +48,26 @@
             <div class="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-6">
                 <h3 class="text-lg font-semibold text-blue-900 mb-3">Informasi Tarif Sewa Alat (Per Hari)</h3>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                    <div class="flex justify-between">
-                        <span class="text-blue-700">Ban Renang:</span>
-                        <span class="font-semibold text-blue-900">Rp 15.000/hari</span>
-                    </div>
-                    <div class="flex justify-between">
-                        <span class="text-blue-700">Kacamata Renang:</span>
-                        <span class="font-semibold text-blue-900">Rp 10.000/hari</span>
-                    </div>
-                    <div class="flex justify-between">
-                        <span class="text-blue-700">Papan Renang:</span>
-                        <span class="font-semibold text-blue-900">Rp 20.000/hari</span>
-                    </div>
-                    <div class="flex justify-between">
-                        <span class="text-blue-700">Pelampung:</span>
-                        <span class="font-semibold text-blue-900">Rp 15.000/hari</span>
-                    </div>
-                    <div class="flex justify-between">
-                        <span class="text-blue-700">Fins (Kaki Katak):</span>
-                        <span class="font-semibold text-blue-900">Rp 25.000/hari</span>
-                    </div>
-                    <div class="flex justify-between">
-                        <span class="text-blue-700">Snorkel:</span>
-                        <span class="font-semibold text-blue-900">Rp 20.000/hari</span>
-                    </div>
+                    @forelse($alatTersedia as $alat)
+                        <div class="flex justify-between">
+                            <span class="text-blue-700">{{ $alat['nama'] }}:</span>
+                            <span class="font-semibold text-blue-900">
+                                Rp {{ number_format($alat['harga'], 0, ',', '.') }}/hari
+                                <span class="text-xs text-blue-600">(Stok: {{ $alat['stok_total'] }})</span>
+                            </span>
+                        </div>
+                    @empty
+                        <div class="text-center text-gray-500">
+                            <i class="fas fa-info-circle mb-2"></i>
+                            <p>Tidak ada alat yang tersedia saat ini</p>
+                        </div>
+                    @endforelse
                 </div>
             </div>
 
             <!-- Form Booking -->
             <div class="bg-white rounded-lg shadow-md p-6">
-                <form action="{{ route('user.booking.sewa-alat.store') }}" method="POST" class="space-y-6">
+                <form action="{{ route('user.booking.sewa-alat.store') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
                     @csrf
                     
                     <!-- Data Penyewa -->
@@ -127,24 +117,14 @@
                                         class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
                                         required onchange="updateHarga()">
                                     <option value="">Pilih Jenis Alat</option>
-                                    <option value="ban_renang" {{ old('jenis_alat') == 'ban_renang' ? 'selected' : '' }}>
-                                        Ban Renang (Rp 15.000/hari)
-                                    </option>
-                                    <option value="kacamata_renang" {{ old('jenis_alat') == 'kacamata_renang' ? 'selected' : '' }}>
-                                        Kacamata Renang (Rp 10.000/hari)
-                                    </option>
-                                    <option value="papan_renang" {{ old('jenis_alat') == 'papan_renang' ? 'selected' : '' }}>
-                                        Papan Renang (Rp 20.000/hari)
-                                    </option>
-                                    <option value="pelampung" {{ old('jenis_alat') == 'pelampung' ? 'selected' : '' }}>
-                                        Pelampung (Rp 15.000/hari)
-                                    </option>
-                                    <option value="fins" {{ old('jenis_alat') == 'fins' ? 'selected' : '' }}>
-                                        Fins - Kaki Katak (Rp 25.000/hari)
-                                    </option>
-                                    <option value="snorkel" {{ old('jenis_alat') == 'snorkel' ? 'selected' : '' }}>
-                                        Snorkel (Rp 20.000/hari)
-                                    </option>
+                                    @foreach($alatTersedia as $alat)
+                                        <option value="{{ $alat['kode'] }}" 
+                                                data-harga="{{ $alat['harga'] }}"
+                                                data-stok="{{ $alat['stok_total'] }}"
+                                                {{ old('jenis_alat') == $alat['kode'] ? 'selected' : '' }}>
+                                            {{ $alat['nama'] }} (Rp {{ number_format($alat['harga'], 0, ',', '.') }}/hari) - Stok: {{ $alat['stok_total'] }}
+                                        </option>
+                                    @endforeach
                                 </select>
                             </div>
                         </div>
@@ -158,7 +138,7 @@
                                        value="{{ old('jumlah_alat', 1) }}"
                                        min="1" max="20"
                                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                                       required onchange="updateHarga()">
+                                       required onchange="updateHarga()" oninput="updateHarga()">
                             </div>
                         </div>
                     </div>
@@ -184,10 +164,16 @@
                                     Foto Jaminan <span class="text-red-500">*</span>
                                 </label>
                                 <input type="file" id="foto_jaminan" name="foto_jaminan" 
-                                       accept="image/jpeg,image/png,image/jpg"
+                                       accept="image/jpeg,image/png,image/jpg,image/gif"
                                        class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                                       required>
-                                <p class="text-xs text-gray-500 mt-1">Upload foto KTP/SIM Anda (format: JPG, PNG, max 2MB)</p>
+                                       required onchange="previewImage(this)">
+                                <p class="text-xs text-gray-500 mt-1">Upload foto KTP/SIM Anda (format: JPG, PNG, GIF, max 2MB)</p>
+                                
+                                <!-- Preview Image -->
+                                <div id="imagePreview" class="hidden mt-3">
+                                    <p class="text-sm text-gray-700 mb-2">Preview:</p>
+                                    <img id="previewImg" src="" alt="Preview" class="max-w-xs h-auto rounded-lg border">
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -231,28 +217,64 @@
 
     <script>
         function updateHarga() {
-            const jenisAlat = document.getElementById('jenis_alat').value;
+            const jenisAlatSelect = document.getElementById('jenis_alat');
+            const jenisAlat = jenisAlatSelect.value;
             const jumlahAlat = parseInt(document.getElementById('jumlah_alat').value) || 1;
             
-            const hargaPerItem = {
-                'ban_renang': 15000,
-                'kacamata_renang': 10000,
-                'papan_renang': 20000,
-                'pelampung': 15000,
-                'fins': 25000,
-                'snorkel': 20000
-            };
-            
-            if (jenisAlat && hargaPerItem[jenisAlat]) {
-                const totalHarga = hargaPerItem[jenisAlat] * jumlahAlat;
-                document.getElementById('harga-display').textContent = 
-                    'Rp ' + totalHarga.toLocaleString('id-ID');
-                document.getElementById('detail-harga').textContent = 
-                    `${jumlahAlat} alat × Rp ${hargaPerItem[jenisAlat].toLocaleString('id-ID')}/hari`;
+            if (jenisAlat) {
+                // Ambil harga dari data-attribute option yang terpilih
+                const selectedOption = jenisAlatSelect.options[jenisAlatSelect.selectedIndex];
+                const hargaPerItem = parseInt(selectedOption.getAttribute('data-harga')) || 0;
+                const stokTersedia = parseInt(selectedOption.getAttribute('data-stok')) || 0;
+                
+                if (hargaPerItem > 0) {
+                    const totalHarga = hargaPerItem * jumlahAlat;
+                    document.getElementById('harga-display').textContent = 
+                        'Rp ' + totalHarga.toLocaleString('id-ID');
+                    document.getElementById('detail-harga').textContent = 
+                        `${jumlahAlat} alat × Rp ${hargaPerItem.toLocaleString('id-ID')}/hari`;
+                    
+                    // Update max jumlah alat berdasarkan stok
+                    const jumlahAlatInput = document.getElementById('jumlah_alat');
+                    jumlahAlatInput.max = Math.min(stokTersedia, 20);
+                    
+                    // Validasi jika jumlah melebihi stok
+                    if (jumlahAlat > stokTersedia) {
+                        jumlahAlatInput.value = stokTersedia;
+                        updateHarga(); // Rekursif untuk update dengan nilai yang benar
+                    }
+                } else {
+                    document.getElementById('harga-display').textContent = 'Rp 0';
+                    document.getElementById('detail-harga').textContent = 'Harga tidak tersedia';
+                }
             } else {
                 document.getElementById('harga-display').textContent = 'Rp 0';
                 document.getElementById('detail-harga').textContent = 
                     'Harga akan dihitung otomatis berdasarkan jenis alat dan jumlah (per hari)';
+                
+                // Reset max jumlah alat
+                document.getElementById('jumlah_alat').max = 20;
+            }
+        }
+
+        // Preview image function
+        function previewImage(input) {
+            const file = input.files[0];
+            const preview = document.getElementById('imagePreview');
+            const previewImg = document.getElementById('previewImg');
+            
+            if (file) {
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    previewImg.src = e.target.result;
+                    preview.classList.remove('hidden');
+                };
+                
+                reader.readAsDataURL(file);
+            } else {
+                preview.classList.add('hidden');
+                previewImg.src = '';
             }
         }
 

@@ -110,7 +110,7 @@
                         </div>
                         <div class="flex justify-between">
                             <span class="text-gray-600">Harga per Item:</span>
-                            <span class="font-medium">Rp {{ number_format($bookingSewaAlat->harga_per_item, 0, ',', '.') }}/jam</span>
+                            <span class="font-medium">Rp {{ number_format($bookingSewaAlat->harga_per_item, 0, ',', '.') }}</span>
                         </div>
                         <div class="flex justify-between text-lg font-semibold">
                             <span>Total Harga:</span>
@@ -189,9 +189,30 @@
                                 Bayar Sekarang
                             </a>
                         @endif
+                    @elseif($bookingSewaAlat->status === 'pending')
+                        <div class="bg-yellow-100 text-yellow-800 py-3 px-6 rounded-lg text-center font-medium">
+                            <i class="fas fa-clock mr-2"></i>
+                            Menunggu persetujuan admin untuk melakukan pembayaran
+                        </div>
+                    @elseif($bookingSewaAlat->status_pembayaran === 'menunggu_konfirmasi')
+                        <div class="bg-blue-100 text-blue-800 py-3 px-6 rounded-lg text-center font-medium">
+                            <i class="fas fa-hourglass-half mr-2"></i>
+                            Pembayaran sedang diverifikasi admin
+                        </div>
+                    @elseif($bookingSewaAlat->status_pembayaran === 'lunas')
+                        <div class="bg-green-100 text-green-800 py-3 px-6 rounded-lg text-center font-medium">
+                            <i class="fas fa-check-circle mr-2"></i>
+                            Pembayaran telah lunas
+                        </div>
                     @elseif($bookingSewaAlat->status_pembayaran === 'ditolak')
+                        <div class="bg-red-100 text-red-800 py-3 px-6 rounded-lg text-center font-medium">
+                            <i class="fas fa-times-circle mr-2"></i>
+                            Pembayaran ditolak. Menunggu persetujuan booking untuk pembayaran ulang
+                        </div>
+                    @else
                         <div class="bg-gray-100 text-gray-600 py-3 px-6 rounded-lg text-center font-medium">
-                            Menunggu persetujuan booking untuk melakukan pembayaran ulang
+                            <i class="fas fa-info-circle mr-2"></i>
+                            Status: {{ $bookingSewaAlat->status_label }} - {{ $bookingSewaAlat->status_pembayaran_label }}
                         </div>
                     @endif
 
